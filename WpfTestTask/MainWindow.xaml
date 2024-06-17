@@ -6,5 +6,5 @@
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
         Title="Каталог книг" Height="450" Width="800">
-    <Button Content="Работа с книгами" HorizontalAlignment="Left" Margin="250,315,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+    <Button Content="Работа с книгами" HorizontalAlignment="Right" Margin="0,363,690,0" Click="Button_Click" Height="20" VerticalAlignment="Top"/>
 </Window>

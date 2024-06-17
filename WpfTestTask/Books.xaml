@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Books" Height="450" Width="800">
     <Grid>
-        <DataGrid Name="DataGridBooks" Margin="0,0,0,43"></DataGrid>    
-        <Button Name="ButtonGetBooks" Content="Просмотреть книги" HorizontalAlignment="Left" Margin="10,396,0,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
+        <DataGrid Name="DataGridBooks" Margin="0,0,0,81"></DataGrid>
+        <Button Name="ButtonGetBooks" Content="Просмотреть книги" HorizontalAlignment="Right" Margin="0,373,678,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace WpfTestTask
         public Books()
         {
             InitializeComponent();
+        }
+
+        private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
+        {
+            PSqlConnection pSqlConnection = new PSqlConnection();
+            DataGridBooks.ItemsSource = pSqlConnection.GetData("SELECT * FROM \"Books\"").ItemsSource;
         }
     }
 }
