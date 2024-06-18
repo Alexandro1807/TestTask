@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="AddBookWindow" Height="450" Width="800">
     <Grid>
-        
+        <TextBox HorizontalAlignment="Left" Margin="280,16,0,0" TextWrapping="Wrap" Text="Название книги" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="280,47,0,0" TextWrapping="Wrap" Text="Фамилия автора" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="280,78,0,0" TextWrapping="Wrap" Text="Имя автора" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="280,109,0,0" TextWrapping="Wrap" Text="Отчество автора" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="280,140,0,0" TextWrapping="Wrap" Text="ISBN книги" VerticalAlignment="Top" Width="120"/>
+        <Label Content="Название книги" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+        <Label Content="Отчество автора" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
+        <Label Content="ISBN книги" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
+        <Label Content="Краткое содержание" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Margin="280,170,0,0" TextWrapping="Wrap" Text="Краткое содержание" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru"/>
+
     </Grid>
 </Window>
