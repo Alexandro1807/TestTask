@@ -1,98 +1,50 @@
 ﻿using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using WpfTestTask.Models;
 
 namespace WpfTestTask
 {
-    class PSqlConnection
+    static class PSqlConnection
     {
-        string sqlConnectionString = "Server=localhost;Port=5432;Database=test;User Id=postgres;Password=pass1234TestTask";
-        NpgsqlConnection sqlConnection;
-        NpgsqlCommand sqlCommand;
+        static string sqlConnectionString = "Server=localhost;Port=5432;Database=test;User Id=postgres;Password=pass1234TestTask";
+        static NpgsqlConnection sqlConnection;
+        static NpgsqlCommand sqlCommand;
 
-        private void PSqlConnectionOpen()
+        private static void PSqlConnectionOpen() //Открытие соединения PostgreSQL
         {
             sqlConnection = new NpgsqlConnection(sqlConnectionString);
             if (sqlConnection.State == ConnectionState.Closed) sqlConnection.Open();
         }
 
-        private void PSqlConnectionClosed()
+        private static void PSqlConnectionClosed() //Закрытие соединения PostgreSQL
         {
             sqlConnection.Close();
         }
 
-        private void PSqlCommand(string command)
+        private static void PSqlCommand(string command) //Инициализация команды
         {
             sqlCommand = new NpgsqlCommand();
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = command;
         }
 
-        public ItemsControl GetData(string command) //Простое получение данных и возврат в любом виде
+        public static DataTable GetData(string command) //Простое получение данных и возврат в любом виде
         {
             PSqlConnectionOpen();
             PSqlCommand(command);
             NpgsqlDataReader dataReader = sqlCommand.ExecuteReader();
-            ItemsControl itemsControl = new ItemsControl() { ItemsSource = dataReader };
-            dataReader.Close();
+            DataTable dataTable = new DataTable();
+            dataTable.Load(dataReader);
             PSqlConnectionClosed();
-            return itemsControl;
-        }
-
-        public void GetDataBooks(string command) //Поменять на return BooksDBContext ?????
-        {
-            //Используем GetData для получения данных, здесь заполняем класс под нужный DataGrid
-            //Сделать класс для сущности Books и возврата Books с дополнительными запросами
-        }
-
-        private void SqlConnectionReader()
-        {
-            //using NpgsqlDataSource dataSource = NpgsqlDataSource.Create(sqlConnectionString);
-            //string commandQuery = "SELECT * FROM \"Books\"";
-            //using NpgsqlCommand command = dataSource.CreateCommand(commandQuery);
-            //using NpgsqlDataReader reader = command.ExecuteReader();
-            //while (reader.Read())
-            //{
-            //    if (reader.HasRows)
-            //    {
-            //        this.DataGridBooks.ItemsSource = reader;
-            //    }
-            //}
-
-            /*
-            await using NpgsqlDataSource dataSource = NpgsqlDataSource.Create(sqlConnectionString);
-            string commandQuery = "SELECT * FROM \"Books\"";
-            await using NpgsqlCommand command = dataSource.CreateCommand(commandQuery);
-            await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                if (reader.HasRows)
-                {
-                    this.DataGridBooks.ItemsSource = reader;
-                }
-            }
-            */
-            //using (NpgsqlConnection sqlConnection = new NpgsqlConnection(sqlConnectionString))
-            //{
-            //    using (NpgsqlCommand command = new NpgsqlCommand() { Connection = sqlConnection, CommandType = CommandType.Text })
-            //    {
-            //        command.CommandText = "SELECT * FROM \"Books\"";
-            //        sqlConnection.Open();
-            //        NpgsqlDataReader dataReader = command.ExecuteReader();
-            //        while (dataReader.Read())
-            //        {
-            //            if (dataReader.HasRows)
-            //            {
-            //                DataGridBooks.ItemsSource = dataReader;
-            //            }
-            //        }
-            //    }
-            //}
+            return dataTable;
         }
     }
 }

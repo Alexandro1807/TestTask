@@ -1,0 +1,28 @@
+﻿<Window x:Class="WpfTestTask.BooksWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfTestTask"
+        mc:Ignorable="d"
+        Title="Books" Height="450" Width="800">
+    <Grid>
+        <DataGrid Name="DataGridBooks" Margin="0,0,0,81" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path = Cover}" IsReadOnly="true" Header="Обложка" />
+                <DataGridTextColumn Binding="{Binding Path = Id}" IsReadOnly="true" Header="ID" />
+                <DataGridTextColumn Binding="{Binding Path = LastModified}" IsReadOnly="true" Header="Последнее изменение" />
+                <DataGridTextColumn Binding="{Binding Path = Name}" IsReadOnly="true" Header="Название" />
+                <DataGridTextColumn Binding="{Binding Path = FirstName}" IsReadOnly="true" Header="Имя" />
+                <DataGridTextColumn Binding="{Binding Path = LastName}" IsReadOnly="true" Header="Фамилия" />
+                <DataGridTextColumn Binding="{Binding Path = MiddleName}" IsReadOnly="true" Header="Отчество" />
+                <DataGridTextColumn Binding="{Binding Path = YearOfProduction}" IsReadOnly="true" Header="Год выпуска" />
+                <DataGridTextColumn Binding="{Binding Path = ISBN}" IsReadOnly="true" Header="ISBN" />
+                <DataGridTextColumn Binding="{Binding Path = Shortcut}" IsReadOnly="true" Header="Краткое содержание" />
+                <DataGridTextColumn Binding="{Binding Path = Genres}" IsReadOnly="true" Header="Жанры" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,373,678,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
+        <Button Content="Добавить книгу" HorizontalAlignment="Left" Margin="179,373,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+    </Grid>
+</Window>

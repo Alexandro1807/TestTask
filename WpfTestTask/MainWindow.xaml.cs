@@ -26,7 +26,7 @@ namespace WpfTestTask
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Books win = new Books();
+            BooksWindow win = new BooksWindow();
             win.Show();
         }
     }

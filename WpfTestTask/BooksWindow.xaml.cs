@@ -12,23 +12,33 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfTestTask.Models;
+using System.ComponentModel;
+using WpfTestTask.Controllers;
 
 namespace WpfTestTask
 {
     /// <summary>
-    /// Логика взаимодействия для Books.xaml
+    /// Логика взаимодействия для BooksWindow.xaml
     /// </summary>
-    public partial class Books : Window
+    public partial class BooksWindow : Window
     {
-        public Books()
+        private BindingList<Book> _bookList;
+        public BooksWindow()
         {
             InitializeComponent();
         }
 
         private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
         {
-            PSqlConnection pSqlConnection = new PSqlConnection();
-            DataGridBooks.ItemsSource = pSqlConnection.GetData("SELECT * FROM \"Books\"").ItemsSource;
+            _bookList = BookController.GetDataBooks();
+            DataGridBooks.ItemsSource = _bookList;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            AddBookWindow win = new AddBookWindow();
+            win.Show();
         }
     }
 }
