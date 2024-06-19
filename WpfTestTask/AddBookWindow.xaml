@@ -29,6 +29,7 @@
         <Button Name="ButtonMinusOneToYearOfProduction" Content="-1" HorizontalAlignment="Left" Margin="231,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneToYearOfProduction_Click"/>
         <Button Name="ButtonMinusTenToYearOfProduction" Content="-10" HorizontalAlignment="Left" Margin="196,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusTenToYearOfProduction_Click"/>
         <Button Name="ButtonMinusOneHundredToYearOfProduction" Content="-100" HorizontalAlignment="Left" Margin="161,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneHundredToYearOfProduction_Click"/>
+        <Button Name="ButtonAddCover" Content="Добавить обложку" HorizontalAlignment="Left" Margin="161,350,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.5,0.5" Click="ButtonAddCover_Click"/>
         <Slider Name="SliderYearOfProduction" HorizontalAlignment="Left" Margin="161,311,0,0" VerticalAlignment="Top" Width="300" Maximum="3000" IsSelectionRangeEnabled="True" ToolTip="Год выпуска" Delay="100" SmallChange="1" Value="2024" ValueChanged="SliderYearOfProduction_ValueChanged" IsSnapToTickEnabled="True"/>
     </Grid>
 </Window>

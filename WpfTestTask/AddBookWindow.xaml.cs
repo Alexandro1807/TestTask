@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -56,6 +57,16 @@ namespace WpfTestTask
         private void ButtonMinusOneHundredToYearOfProduction_Click(object sender, RoutedEventArgs e)
         {
             SliderYearOfProduction.Value -= 100;
+        }
+
+        private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new() { DefaultExt = ".png" };
+            bool? result = dialog.ShowDialog();
+            if (result == true)
+            {
+                string fileName = dialog.FileName;
+            }
         }
     }
 }
