@@ -7,18 +7,28 @@
         mc:Ignorable="d"
         Title="AddBookWindow" Height="450" Width="800">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Margin="280,16,0,0" TextWrapping="Wrap" Text="Название книги" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="280,47,0,0" TextWrapping="Wrap" Text="Фамилия автора" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="280,78,0,0" TextWrapping="Wrap" Text="Имя автора" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="280,109,0,0" TextWrapping="Wrap" Text="Отчество автора" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Margin="280,140,0,0" TextWrapping="Wrap" Text="ISBN книги" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Название книги"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Фамилия автора"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Имя автора"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Отчество автора"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="ISBN книги"/>
+        <TextBox HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="100" ToolTip="Краткое содержание" AcceptsReturn="True"/>
+        <TextBox Name="TextBoxYearOfProduction" HorizontalAlignment="Left" Margin="268,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="22"/>
         <Label Content="Название книги" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
         <Label Content="Отчество автора" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <Label Content="ISBN книги" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <Label Content="Краткое содержание" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="280,170,0,0" TextWrapping="Wrap" Text="Краткое содержание" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru"/>
-
+        <Label Content="Год выпуска" HorizontalAlignment="Left" Margin="10,293,0,0" VerticalAlignment="Top"/>
+        <Label Content="Обложка книги" HorizontalAlignment="Left" Margin="10,347,0,0" VerticalAlignment="Top"/>
+        <Button Content="Добавить книгу" HorizontalAlignment="Left" Margin="10,392,0,0" VerticalAlignment="Top"/>
+        <Button Name="ButtonPlusOneToYearOfProduction" Content="+1" HorizontalAlignment="Left" Margin="359,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonPlusOneToYearOfProduction_Click"/>
+        <Button Name="ButtonPlusTenToYearOfProduction" Content="+10" HorizontalAlignment="Left" Margin="394,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonPlusTenToYearOfProduction_Click"/>
+        <Button Name="ButtonPlusOneHundredToYearOfProduction" Content="+100" HorizontalAlignment="Left" Margin="429,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonPlusOneHundredToYearOfProduction_Click"/>
+        <Button Name="ButtonMinusOneToYearOfProduction" Content="-1" HorizontalAlignment="Left" Margin="231,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneToYearOfProduction_Click"/>
+        <Button Name="ButtonMinusTenToYearOfProduction" Content="-10" HorizontalAlignment="Left" Margin="196,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusTenToYearOfProduction_Click"/>
+        <Button Name="ButtonMinusOneHundredToYearOfProduction" Content="-100" HorizontalAlignment="Left" Margin="161,284,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneHundredToYearOfProduction_Click"/>
+        <Slider Name="SliderYearOfProduction" HorizontalAlignment="Left" Margin="161,311,0,0" VerticalAlignment="Top" Width="300" Maximum="3000" IsSelectionRangeEnabled="True" ToolTip="Год выпуска" Delay="100" SmallChange="1" Value="2024" ValueChanged="SliderYearOfProduction_ValueChanged" IsSnapToTickEnabled="True"/>
     </Grid>
 </Window>

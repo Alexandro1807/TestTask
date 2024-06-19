@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Books" Height="450" Width="800">
+        Title="Книги" Height="450" Width="800">
     <Grid>
         <DataGrid Name="DataGridBooks" Margin="0,0,0,81" AutoGenerateColumns="False">
             <DataGrid.Columns>
