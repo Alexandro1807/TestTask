@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using WpfTestTask.Models;
 
 namespace WpfTestTask
@@ -38,13 +39,35 @@ namespace WpfTestTask
 
         public static DataTable GetData(string command) //Простое получение данных и возврат в любом виде
         {
-            PSqlConnectionOpen();
-            PSqlCommand(command);
-            NpgsqlDataReader dataReader = sqlCommand.ExecuteReader();
             DataTable dataTable = new DataTable();
-            dataTable.Load(dataReader);
-            PSqlConnectionClosed();
-            return dataTable;
+            try
+            {
+                PSqlConnectionOpen();
+                PSqlCommand(command);
+                NpgsqlDataReader dataReader = sqlCommand.ExecuteReader();
+                dataTable.Load(dataReader);
+                return dataTable;
+            }
+            finally
+            {
+                PSqlConnectionClosed();
+            }
+            
+        }
+
+        public static bool SaveData(string command) //Простое сохранение данных
+        {
+            try
+            {
+                PSqlConnectionOpen();
+                PSqlCommand(command);
+                if (sqlCommand.ExecuteNonQuery() == 0) return false;
+                return true;
+            }
+            finally
+            {
+                PSqlConnectionClosed();
+            }
         }
     }
 }

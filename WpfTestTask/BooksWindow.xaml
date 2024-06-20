@@ -10,6 +10,7 @@
         <DataGrid Name="DataGridBooks" Margin="0,0,0,81" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path = Cover}" IsReadOnly="true" Header="Обложка" />
+                <DataGridTextColumn Binding="{Binding Path = CoverText}" IsReadOnly="true" Header="ОбложкаСсылка" />
                 <DataGridTextColumn Binding="{Binding Path = Id}" IsReadOnly="true" Header="ID" />
                 <DataGridTextColumn Binding="{Binding Path = LastModified}" IsReadOnly="true" Header="Последнее изменение" />
                 <DataGridTextColumn Binding="{Binding Path = Name}" IsReadOnly="true" Header="Название" />
