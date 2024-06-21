@@ -31,7 +31,7 @@ namespace WpfTestTask
 
         private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
         {
-            _bookList = BookController.GetDataBooks();
+            _bookList = BookController.SelectDataBooks();
             DataGridBooks.ItemsSource = _bookList;
         }
 

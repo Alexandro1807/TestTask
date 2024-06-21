@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 
 namespace WpfTestTask
@@ -24,12 +24,18 @@ namespace WpfTestTask
     {
         byte[] bookCoverImageByte = null;
         string coverText = string.Empty;
-        //public delegate void MyDelegate(string expectionMessage);
         public AddBookWindow()
         {
             InitializeComponent();
+            //Вызывать метод инициализации ComboBox всеми элементами из Genres
         }
-       
+
+        private void ComboBoxGenresInitialize()
+        {
+
+        }
+
+        #region Функции обработок кнопок
         private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new() { DefaultExt = ".png" };
@@ -53,7 +59,7 @@ namespace WpfTestTask
         {
             try
             {
-                LabelError.Visibility = Visibility.Hidden;
+                TextBoxError.Visibility = Visibility.Hidden;
                 Guid id = Guid.NewGuid();
                 DateTime lastModified = DateTime.Now;
                 int yearOfProduction = 0;
@@ -65,18 +71,20 @@ namespace WpfTestTask
                 middleName = TextBoxMiddleName.Text;
                 isbn = TextBoxISBN.Text;
                 shortcut = TextBoxShortcut.Text;
-                genres = TextBoxShortcut.Text;
-                //Придумать с coverText
-                //Формировать экземпляр класса Book и вызывать метод SaveDataBooks(Book)
+                genres = TextBoxShortcut.Text; //ПЕРЕДЕЛАТЬ
                 Book book = new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, coverText, bookCoverImageByte);
-                WpfTestTask.Controllers.BookController.SaveDataBooks(book);
+                BookController.InsertDataBooks(book);
+                GenreOfBookController.InsertGenresOfBook(book);
+                CoverController.InsertCovers(book);
+
             }
             catch (Exception ex)
             {
-                new Thread(() => { SetLabelErrorContentAsync(ex.Message); }).Start(); //Переделать под вызов нового потока с передачей переменной
+                SetTextBoxErrorContent(ex.Message);
             }
             
         }
+        #endregion
 
         #region События изменений на форме
         /// <summary>
@@ -153,13 +161,24 @@ namespace WpfTestTask
         /// Появление ошибки. Размещение информации об ошибке.
         /// </summary>
         /// <param name="ex"></param>
-        private async void SetLabelErrorContentAsync(string expectionMessage) //Переделать под вызов нового потока
+        private void SetTextBoxErrorContent(string expectionMessage) //Переделать под вызов нового потока
         {
-            LabelError.Content = ((string)LabelError.Content).Replace("неизвестно", expectionMessage);
-            LabelError.Visibility = Visibility.Visible;
-            Thread.Sleep(10); //Увеличить до 10000
-            LabelError.Visibility = Visibility.Hidden;
+            TextBoxError.Text = "Ошибка: " + expectionMessage.Replace("\r\n", ". ").Replace(" .", "") + ". Попробуйте ещё раз.";
+            TextBoxError.Visibility = Visibility.Visible;
+            SetTextBoxVisibilityCollapsedAsync(TextBoxError);
+        }
+
+        private async Task SetTextBoxVisibilityCollapsedAsync(TextBox textBox)
+        {
+            await Task.Delay(10000);
+            textBox.Visibility = Visibility.Collapsed;
         }
         #endregion
+
+        private void ComboBoxGenres_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<(Guid, string)> genres = GenreController.SelectGenres();
+            ComboBoxGenres.ItemsSource = genres;
+        }
     }
 }

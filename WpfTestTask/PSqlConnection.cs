@@ -37,7 +37,7 @@ namespace WpfTestTask
             sqlCommand.CommandText = command;
         }
 
-        public static DataTable GetData(string command) //Простое получение данных и возврат в любом виде
+        public static DataTable SelectData(string command) //Простое получение данных и возврат в любом виде
         {
             DataTable dataTable = new DataTable();
             try
@@ -55,7 +55,7 @@ namespace WpfTestTask
             
         }
 
-        public static bool SaveData(string command) //Простое сохранение данных
+        public static bool InsertData(string command) //Простое сохранение данных
         {
             try
             {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Книги" Height="450" Width="800">
+        Title="Книги" Height="450" Width="800" ResizeMode="NoResize">
     <Grid>
         <DataGrid Name="DataGridBooks" Margin="0,0,0,81" AutoGenerateColumns="False">
             <DataGrid.Columns>
@@ -23,7 +23,7 @@
                 <DataGridTextColumn Binding="{Binding Path = Genres}" IsReadOnly="true" Header="Жанры" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,373,678,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
-        <Button Content="Добавить книгу" HorizontalAlignment="Left" Margin="179,373,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,373,640,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
+        <Button Content="Добавить книгу" HorizontalAlignment="Left" Margin="179,373,0,0" VerticalAlignment="Top" Click="Button_Click" Width="150"/>
     </Grid>
 </Window>
