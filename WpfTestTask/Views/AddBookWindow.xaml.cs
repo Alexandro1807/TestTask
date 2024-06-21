@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Microsoft.Windows.Themes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 
@@ -23,11 +25,9 @@ namespace WpfTestTask
     public partial class AddBookWindow : Window
     {
         byte[] bookCoverImageByte = null;
-        string coverText = string.Empty;
         public AddBookWindow()
         {
             InitializeComponent();
-            //Вызывать метод инициализации ComboBox всеми элементами из Genres
         }
 
         private void ComboBoxGenresInitialize()
@@ -42,13 +42,12 @@ namespace WpfTestTask
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
-                coverText = dialog.FileName;
                 using (FileStream pgFileStream = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read))
                 {
                     using (BinaryReader pgReader = new BinaryReader(new BufferedStream(pgFileStream)))
                     {
                         bookCoverImageByte = pgReader.ReadBytes(Convert.ToInt32(pgFileStream.Length));
-                        LabelCoverName.Content = coverText;
+                        LabelCoverName.Content += dialog.FileName;
                         LabelCoverName.Visibility = Visibility.Visible;
                     }
                 }
@@ -64,7 +63,7 @@ namespace WpfTestTask
                 DateTime lastModified = DateTime.Now;
                 int yearOfProduction = 0;
                 if (!int.TryParse(TextBoxYearOfProduction.Text, out yearOfProduction)) yearOfProduction = DateTime.Now.Year;
-                string name, firstName, lastName, middleName, isbn, shortcut, genres;
+                string name, firstName, lastName, middleName, isbn, shortcut, genres, coverText;
                 name = TextBoxName.Text;
                 firstName = TextBoxFirstName.Text;
                 lastName = TextBoxLastName.Text;
@@ -72,6 +71,7 @@ namespace WpfTestTask
                 isbn = TextBoxISBN.Text;
                 shortcut = TextBoxShortcut.Text;
                 genres = TextBoxShortcut.Text; //ПЕРЕДЕЛАТЬ
+                coverText = (string)LabelCoverName.Content;
                 Book book = new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, coverText, bookCoverImageByte);
                 BookController.InsertDataBooks(book);
                 GenreOfBookController.InsertGenresOfBook(book);
@@ -175,10 +175,24 @@ namespace WpfTestTask
         }
         #endregion
 
-        private void ComboBoxGenres_Loaded(object sender, RoutedEventArgs e)
+        private void ComboBoxGenresAdd_Loaded(object sender, RoutedEventArgs e)
         {
-            List<(Guid, string)> genres = GenreController.SelectGenres();
-            ComboBoxGenres.ItemsSource = genres;
+            List<ListOfGuidAndString> genres = GenreController.SelectGenresToListOfGuidAndString();
+            if (genres.Count > 0)
+            {
+                ComboBoxGenresAdd.ItemsSource = genres;
+                ComboBoxGenresAdd.SelectedItem = genres.First();
+            }
+        }
+
+        private void LabelCoverName_Loaded(object sender, RoutedEventArgs e)
+        {
+            LabelCoverName.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBoxError_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBoxError.BorderBrush = Brushes.White;
         }
     }
 }

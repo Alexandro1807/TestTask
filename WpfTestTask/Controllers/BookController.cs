@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfTestTask.Database;
 using WpfTestTask.Models;
 
 namespace WpfTestTask.Controllers

@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using WpfTestTask.Models;
 
-namespace WpfTestTask
+namespace WpfTestTask.Database
 {
     static class PSqlConnection
     {
@@ -52,7 +52,7 @@ namespace WpfTestTask
             {
                 PSqlConnectionClosed();
             }
-            
+
         }
 
         public static bool InsertData(string command) //Простое сохранение данных
