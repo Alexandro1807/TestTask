@@ -25,12 +25,13 @@ namespace WpfTestTask
     /// </summary>
     public partial class AddBookWindow : Window
     {
-        byte[] bookCoverImageByte = null;
+        byte[] _cover = null;
+        BitmapImage BM;
         public AddBookWindow()
         {
             InitializeComponent();
 
-            List<ListOfGuidAndString> genres = GenreController.SelectGenresToListOfGuidAndString();
+            List<Genre> genres = GenreController.SelectGenresToListOfGuidAndString();
             ComboBoxGenresAdd.ItemsSource = genres;
             ComboBoxGenresRemove.ItemsSource = genres;
             ListBoxGenres.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Genre", System.ComponentModel.ListSortDirection.Ascending));
@@ -39,19 +40,28 @@ namespace WpfTestTask
         #region Функции обработок кнопок
         private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new() { DefaultExt = ".png" };
+            OpenFileDialog dialog = new() { AddExtension = true, DefaultExt = ".png", Filter = "PNG (.png)|*.png|JPG (.jpg)|*.jpg|JPEG (.jpeg)|*.jpeg" };
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
-                using (FileStream pgFileStream = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read))
-                {
-                    using (BinaryReader pgReader = new BinaryReader(new BufferedStream(pgFileStream)))
-                    {
-                        bookCoverImageByte = pgReader.ReadBytes(Convert.ToInt32(pgFileStream.Length));
-                        LabelCoverName.Content += dialog.FileName;
-                        LabelCoverName.Visibility = Visibility.Visible;
-                    }
-                }
+                //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+                //encoder.Frames.Add(BitmapFrame.Create(new BitmapImage(new Uri(dialog.FileName))));
+                //using (MemoryStream MS = new MemoryStream())
+                //{
+                //    encoder.Save(MS);
+                //    _cover = MS.ToArray();
+                //}
+                
+                _cover = File.ReadAllBytes(dialog.FileName);
+                //using (FileStream pgFileStream = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read))
+                //{
+                //    using (BinaryReader pgReader = new BinaryReader(new BufferedStream(pgFileStream)))
+                //    {
+                //        _cover = pgReader.ReadBytes(Convert.ToInt32(pgFileStream.Length));
+                //    }
+                //}
+                LabelCoverName.Content += dialog.FileName;
+                LabelCoverName.Visibility = Visibility.Visible;
             }
         }
 
@@ -64,20 +74,22 @@ namespace WpfTestTask
                 DateTime lastModified = DateTime.Now;
                 int yearOfProduction = 0;
                 if (!int.TryParse(TextBoxYearOfProduction.Text, out yearOfProduction)) yearOfProduction = DateTime.Now.Year;
-                string name, firstName, lastName, middleName, isbn, shortcut, genres, coverText;
+                string name, firstName, lastName, middleName, isbn, shortcut, genresOnRow, coverText;
+                List<Genre> genres = new List<Genre>();
                 name = TextBoxName.Text;
                 firstName = TextBoxFirstName.Text;
                 lastName = TextBoxLastName.Text;
                 middleName = TextBoxMiddleName.Text;
                 isbn = TextBoxISBN.Text;
                 shortcut = TextBoxShortcut.Text;
-                genres = TextBoxShortcut.Text; //ПЕРЕДЕЛАТЬ
-                coverText = (string)LabelCoverName.Content;
-                Book book = new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, coverText, bookCoverImageByte);
+                genres = GenreOfBookController.SelectGenresOfBookFromListBox(ListBoxGenres.Items);
+                genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
+                coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
+                Book book = new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, _cover);
                 BookController.InsertDataBooks(book);
                 GenreOfBookController.InsertGenresOfBook(book);
-                CoverController.InsertCovers(book);
-
+                //CoverController.InsertCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
+                CoverController.InsertCoversWithoutImage(book);
             }
             catch (Exception ex)
             {
@@ -188,17 +200,17 @@ namespace WpfTestTask
 
         private void ComboBoxGenresAdd_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListOfGuidAndString item = (ListOfGuidAndString)ComboBoxGenresAdd.SelectedItem;
+            Genre item = (Genre)ComboBoxGenresAdd.SelectedItem;
             if (item != null) UpdateListBoxGenres(item, true);
         }
 
         private void ComboBoxGenresRemove_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListOfGuidAndString item = (ListOfGuidAndString)ComboBoxGenresRemove.SelectedItem;
+            Genre item = (Genre)ComboBoxGenresRemove.SelectedItem;
             if (item != null) UpdateListBoxGenres(item, false);
         }
 
-        private void UpdateListBoxGenres(ListOfGuidAndString item, bool isAdd)
+        private void UpdateListBoxGenres(Genre item, bool isAdd)
         {
             switch (isAdd)
             {

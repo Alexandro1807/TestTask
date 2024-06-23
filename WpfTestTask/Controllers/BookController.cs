@@ -34,12 +34,13 @@ namespace WpfTestTask.Controllers
                 isbn = row["ISBN"].ToString();
                 shortcut = row["Shortcut"].ToString();
 
-                string genres = GenreOfBookController.SelectGenresOfBook(id);
+                List<Genre> genres = GenreOfBookController.SelectGenresOfBook(id);
+                string genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
 
                 string coverText = CoverController.SelectCoverText(id);
                 byte[] cover = CoverController.SelectCover(id);
 
-                books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, coverText, cover));
+                books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
             }
             return books;
         }

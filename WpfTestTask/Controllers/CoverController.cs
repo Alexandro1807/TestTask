@@ -44,6 +44,17 @@ namespace WpfTestTask.Controllers
                 $"'{book.CoverText}');";
             PSqlConnection.InsertData(command);
         }
+
+        public static void InsertCoversWithoutImage(Book book)
+        {
+            string command = "INSERT INTO public.\"Covers\"(\"Id\", \"LastModified\", \"BookId\", \"Cover\", \"CoverText\") VALUES (" +
+                $"'{Guid.NewGuid()}', " +
+                $"'{book.LastModified}', " +
+                $"'{book.Id}', " +
+                $"null, " +
+                $"'{book.CoverText}');";
+            PSqlConnection.InsertData(command);
+        }
         #endregion
     }
 }

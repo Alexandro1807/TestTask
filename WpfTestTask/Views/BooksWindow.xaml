@@ -5,11 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Книги" Height="450" Width="800" ResizeMode="NoResize">
+        Title="Книги" Height="450" Width="1172" ResizeMode="NoResize">
     <Grid>
-        <DataGrid Name="DataGridBooks" Margin="0,0,0,81" AutoGenerateColumns="False">
+        <DataGrid x:Name="DataGridBooks" Margin="143,10,10,50" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Cover}" IsReadOnly="true" Header="Обложка" />
                 <DataGridTextColumn Binding="{Binding CoverText}" IsReadOnly="true" Header="ОбложкаСсылка" />
                 <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="ID" />
                 <DataGridTextColumn Binding="{Binding LastModified}" IsReadOnly="true" Header="Последнее изменение" />
@@ -19,11 +18,15 @@
                 <DataGridTextColumn Binding="{Binding MiddleName}" IsReadOnly="true" Header="Отчество" />
                 <DataGridTextColumn Binding="{Binding YearOfProduction}" IsReadOnly="true" Header="Год выпуска" />
                 <DataGridTextColumn Binding="{Binding ISBN}" IsReadOnly="true" Header="ISBN" />
-                <DataGridTextColumn Binding="{Binding Shortcut}" IsReadOnly="true" Header="Краткое содержание" />
-                <DataGridTextColumn Binding="{Binding Genres}" IsReadOnly="true" Header="Жанры" />
+                <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,373,640,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click"/>
-        <Button Content="Добавить книгу" HorizontalAlignment="Left" Margin="179,373,0,0" VerticalAlignment="Top" Click="Button_Click" Width="150"/>
+        <Button x:Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,294,0,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click" HorizontalAlignment="Left" Width="128"/>
+        <Button x:Name="ButtonOpenAddBookWindow" Content="Добавить книгу" HorizontalAlignment="Left" Margin="10,319,0,0" VerticalAlignment="Top" Click="ButtonOpenAddBookWindow_Click" Width="128"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128">
+            <Image x:Name="ImageCover" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,143,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="146" VerticalAlignment="Top"/>
+
     </Grid>
 </Window>

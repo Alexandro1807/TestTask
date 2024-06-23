@@ -12,18 +12,6 @@ namespace WpfTestTask.Additional
     /// </summary>
     static class AdditionalFunctions
     {
-        /// <summary>
-        /// Добавление в ComboBox 
-        /// </summary>
-        /// <param name="comboBox"></param>
-        /// <param name="list"></param>
-        public static void ComboBoxFilter(ComboBox comboBox, List<ListOfGuidAndString> list)
-        {
-            if (list.Count > 0)
-            {
-                comboBox.ItemsSource = list;
-                comboBox.SelectedItem = list.First();
-            }
-        }
+
     }
 }

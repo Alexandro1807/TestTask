@@ -37,10 +37,10 @@
                 <Label x:Name="LabelGenreAdd" Content="Добавить жанр" HorizontalAlignment="Left" Margin="211,62,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="LabelGenreRemove" Content="Удалить жанр" HorizontalAlignment="Left" Margin="211,122,0,0" VerticalAlignment="Top"/>
                 <Label Content="Обложка книги" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top"/>
-                <Label x:Name="LabelCoverName" Content="Путь:" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,265,0,0" Loaded="LabelCoverName_Loaded" Width="407"/>
-                <ListBox x:Name="ListBoxGenres" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" Width="194" Margin="12,93,0,0" Height="139" VerticalAlignment="Top"/>
-                <ComboBox x:Name="ComboBoxGenresAdd" HorizontalAlignment="Left" Margin="211,93,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresAdd_SelectionChanged"/>
-                <ComboBox x:Name="ComboBoxGenresRemove" HorizontalAlignment="Left" Margin="211,153,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresRemove_SelectionChanged"/>
+                <Label x:Name="LabelCoverName" Content="Путь: " Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,265,0,0" Loaded="LabelCoverName_Loaded" Width="407"/>
+                <ListBox x:Name="ListBoxGenres" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" Width="194" Margin="12,93,0,0" Height="139" VerticalAlignment="Top"/>
+                <ComboBox x:Name="ComboBoxGenresAdd" HorizontalAlignment="Left" Margin="211,93,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresAdd_SelectionChanged"/>
+                <ComboBox x:Name="ComboBoxGenresRemove" HorizontalAlignment="Left" Margin="211,153,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresRemove_SelectionChanged"/>
                 <CheckBox x:Name="CheckBoxGenreUndefined" Content="Не определено" HorizontalAlignment="Left" Margin="70,68,0,0" VerticalAlignment="Top" Click="CheckBoxGenreUndefined_Click"/>
             </Grid>
         </Border>

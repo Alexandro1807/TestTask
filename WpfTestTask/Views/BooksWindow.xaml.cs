@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using WpfTestTask.Models;
 using System.ComponentModel;
 using WpfTestTask.Controllers;
+using System.IO;
 
 namespace WpfTestTask
 {
@@ -35,10 +36,60 @@ namespace WpfTestTask
             DataGridBooks.ItemsSource = _bookList;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
         {
             AddBookWindow win = new AddBookWindow();
             win.Show();
+        }
+
+        private void DataGridBooks_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Book book = (sender as DataGrid).SelectedItem as Book;
+                TextBoxShortcut.Text = book.Shortcut == string.Empty ? "Краткое содержание не определено." : book.Shortcut;
+
+                if (book.CoverText != "underfined")
+                    ImageCover.Source = new BitmapImage(new Uri(book.CoverText));
+                else ImageCover.Source = null;
+                if (book.Cover != null && book.Cover.Length != 0)
+                {
+                    using (MemoryStream memoryStream = new MemoryStream(book.Cover))
+                    {
+                        memoryStream.Write(book.Cover, 0, book.Cover.Length);
+                        memoryStream.Position = 0;
+                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        BitmapImage bitImage = new BitmapImage();
+                        bitImage.BeginInit();
+                        bitImage.StreamSource = memoryStream;
+                        bitImage.EndInit();
+                    }
+
+
+
+
+
+
+                    BitmapImage image = new BitmapImage();
+                    using (MemoryStream mem = new MemoryStream(book.Cover))
+                    {
+                        image.BeginInit();
+                        image.StreamSource = mem;
+                        image.EndInit();
+                    }
+                    image.Freeze();
+                    ImageCover.Source = image;
+                }
+            }
+            catch (Exception ex)
+            {
+                ImageCover.Source = null;
+            }
+            finally
+            {
+
+            }
+            
         }
     }
 }

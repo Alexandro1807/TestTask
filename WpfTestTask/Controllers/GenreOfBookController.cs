@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using WpfTestTask.Database;
 using WpfTestTask.Models;
 
@@ -12,31 +13,60 @@ namespace WpfTestTask.Controllers
     static class GenreOfBookController
     {
         #region Выборка данных
-        public static string SelectGenresOfBook(Guid id)
+        public static string SelectGenresOfBookOnRow(Guid bookId)
         {
-            string command = $"SELECT genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{id}'";
+            string command = $"SELECT genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
             DataTable dataTable = PSqlConnection.SelectData(command);
-            string genres = string.Empty;
+            string genresOnRow = string.Empty;
             foreach (DataRow row in dataTable.Rows)
             {
                 string genre = row["Genre"].ToString();
-                genres += (genre + ", ");
+                genresOnRow += (genre + ", ");
             }
-            if (genres.Length > 0) genres = genres.Remove(genres.Length - 2);
+            if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
+            return genresOnRow;
+        }
+
+        public static List<Genre> SelectGenresOfBook(Guid bookId)
+        {
+            string command = $"SELECT genre.\"Id\", genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
+            DataTable dataTable = PSqlConnection.SelectData(command);
+            List<Genre> genres = new List<Genre>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Guid id = Guid.Empty;
+                if (!Guid.TryParse(row["id"].ToString(), out id)) continue;
+                string genre = row["Genre"].ToString();
+                genres.Add(new Genre(id, genre));
+            }
             return genres;
+        }
+
+        public static List<Genre> SelectGenresOfBookFromListBox(ItemCollection items)
+        {
+            return (from Genre genre in items select genre).ToList();
+        }
+        
+        public static string ConvertGenresToGenresOnRow(List<Genre> genres)
+        {
+            string genresOnRow = string.Empty;
+            foreach (Genre genre in genres)
+                genresOnRow += (genre.Name + ", ");
+            if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
+            return genresOnRow;
         }
         #endregion
 
         #region Добавление данных
         public static void InsertGenresOfBook(Book book)
         {
-            foreach (string genre in book.Genres.Replace(" ", "").Split(','))
+            foreach (Genre genre in book.Genres)
             {
                 string command = "INSERT INTO public.\"GenresOfBook\"(\"Id\", \"LastModified\", \"BookId\", \"GenreId\") VALUES (" +
                     $"'{Guid.NewGuid()}', " +
                     $"'{book.LastModified}', " +
                     $"'{book.Id}', " +
-                    $"(SELECT genre.\"Id\" FROM public.\"Genres\" genre WHERE genre.\"Genre\" = {genre}));";
+                    $"'{genre.Id}');";
                 PSqlConnection.InsertData(command);
             }
         }

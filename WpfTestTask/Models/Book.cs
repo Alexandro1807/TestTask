@@ -17,10 +17,11 @@ namespace WpfTestTask.Models
         public int YearOfProduction { get; set; } = DateTime.Now.Year;
         public string ISBN { get; set; }
         public string Shortcut { get; set; }
-        public string Genres { get; set; }
+        public List<Genre> Genres {  get; set; }
+        public string GenresOnRow { get; set; }
         public string CoverText { get; set; }
         public byte[] Cover { get; set; }
-        public Book(Guid id, DateTime lastModified, string name, string firstName, string lastName, string middleName, int yearOfProduction, string isbn, string shortCut, string genres, string coverText, byte[] cover)
+        public Book(Guid id, DateTime lastModified, string name, string firstName, string lastName, string middleName, int yearOfProduction, string isbn, string shortCut, List<Genre> genres = null, string genresOnRow = null, string coverText = null, byte[] cover = null)
         {
             Id = id;
             LastModified = lastModified;
@@ -31,7 +32,8 @@ namespace WpfTestTask.Models
             YearOfProduction = yearOfProduction;
             ISBN = isbn == "" ? "underfined" : isbn;
             Shortcut = shortCut == "" ? "underfined" : shortCut;
-            Genres = genres == "" ? "underfined" : genres;
+            Genres = genres;
+            GenresOnRow = genresOnRow;
             CoverText = coverText == "" ? "underfined" : coverText;
             Cover = cover;
         }
