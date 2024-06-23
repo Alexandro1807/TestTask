@@ -12,9 +12,10 @@ namespace WpfTestTask.Controllers
     static class GenreController
     {
         #region Выборка данных
+        //Если не получится применить, то удалить
         public static List<(Guid, string)> SelectGenres()
         {
-            string command = $"SELECT genres.\"Id\", genres.\"Genre\" FROM public.\"Genres\" genres ORDER BY genres.\"Id\"";
+            string command = $"SELECT genres.\"Id\", genres.\"Genre\" FROM public.\"Genres\" genres WHERE genres.\"Id\" != '{Guid.Empty}' ORDER BY genres.\"Id\"";
             DataTable dataTable = PSqlConnection.SelectData(command);
             List<(Guid, string)> genres = new List<(Guid, string)>();
             foreach (DataRow row in dataTable.Rows)
@@ -24,7 +25,7 @@ namespace WpfTestTask.Controllers
 
         public static List<ListOfGuidAndString> SelectGenresToListOfGuidAndString()
         {
-            string command = $"SELECT genres.\"Id\", genres.\"Genre\" FROM public.\"Genres\" genres ORDER BY genres.\"Id\"";
+            string command = $"SELECT genres.\"Id\", genres.\"Genre\" FROM public.\"Genres\" genres WHERE genres.\"Id\" != '{Guid.Empty}' ORDER BY genres.\"Id\"";
             DataTable dataTable = PSqlConnection.SelectData(command);
             List<ListOfGuidAndString> genres = new List<ListOfGuidAndString>();
             foreach (DataRow row in dataTable.Rows)

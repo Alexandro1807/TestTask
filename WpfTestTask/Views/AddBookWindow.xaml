@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Добавление книги" Height="397" Width="907" ResizeMode="NoResize">
+        Title="Добавление книги" Height="397" Width="933" ResizeMode="NoResize">
     <Grid>
         <TextBox x:Name="TextBoxName" HorizontalAlignment="Left" Margin="161,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Название книги"/>
         <TextBox x:Name="TextBoxLastName" HorizontalAlignment="Left" Margin="161,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Фамилия автора"/>
@@ -21,7 +21,7 @@
         <Label Content="ISBN книги" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <Label Content="Краткое содержание" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
         <Button x:Name="ButtonAddBook" Content="Добавить книгу" HorizontalAlignment="Left" Margin="10,325,0,0" VerticalAlignment="Top" Click="ButtonAddBook_Click"/>
-        <Border BorderBrush="Black" BorderThickness="1" Margin="466,16,10,0" Height="304" VerticalAlignment="Top">
+        <Border BorderBrush="Black" BorderThickness="1" Margin="466,16,0,0" Height="304" VerticalAlignment="Top" HorizontalAlignment="Left" Width="431">
             <Grid>
                 <TextBox x:Name="TextBoxYearOfProduction" HorizontalAlignment="Left" Margin="209,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="22"/>
                 <Button x:Name="ButtonPlusOneToYearOfProduction" Content="+1" HorizontalAlignment="Left" Margin="300,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonPlusOneToYearOfProduction_Click"/>
@@ -30,17 +30,18 @@
                 <Button x:Name="ButtonMinusOneToYearOfProduction" Content="-1" HorizontalAlignment="Left" Margin="172,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneToYearOfProduction_Click"/>
                 <Button x:Name="ButtonMinusTenToYearOfProduction" Content="-10" HorizontalAlignment="Left" Margin="137,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusTenToYearOfProduction_Click"/>
                 <Button x:Name="ButtonMinusOneHundredToYearOfProduction" Content="-100" HorizontalAlignment="Left" Margin="102,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneHundredToYearOfProduction_Click"/>
-                <Button x:Name="ButtonAddCover" Content="Добавить обложку" HorizontalAlignment="Left" Margin="10,268,0,0" VerticalAlignment="Top" Width="120" Click="ButtonAddCover_Click"/>
+                <Button x:Name="ButtonAddCover" Content="Добавить обложку" HorizontalAlignment="Left" Margin="110,240,0,0" VerticalAlignment="Top" Width="120" Click="ButtonAddCover_Click"/>
                 <Slider x:Name="SliderYearOfProduction" HorizontalAlignment="Left" Margin="102,41,0,0" VerticalAlignment="Top" Width="300" Maximum="3000" IsSelectionRangeEnabled="True" ToolTip="Год выпуска" Delay="100" SmallChange="1" Value="2024" ValueChanged="SliderYearOfProduction_ValueChanged" IsSnapToTickEnabled="True"/>
                 <Label Content="Год выпуска" HorizontalAlignment="Left" Margin="8,12,0,0" VerticalAlignment="Top"/>
                 <Label Content="Жанры" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top"/>
-                <Label Content="Добавить жанр" HorizontalAlignment="Left" Margin="211,62,0,0" VerticalAlignment="Top"/>
-                <Label Content="Удалить жанр" HorizontalAlignment="Left" Margin="211,122,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="LabelGenreAdd" Content="Добавить жанр" HorizontalAlignment="Left" Margin="211,62,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="LabelGenreRemove" Content="Удалить жанр" HorizontalAlignment="Left" Margin="211,122,0,0" VerticalAlignment="Top"/>
                 <Label Content="Обложка книги" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top"/>
-                <Label x:Name="LabelCoverName" Content="Путь:" Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="130,265,0,0" Loaded="LabelCoverName_Loaded" Width="274"/>
+                <Label x:Name="LabelCoverName" Content="Путь:" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,265,0,0" Loaded="LabelCoverName_Loaded" Width="407"/>
                 <ListBox x:Name="ListBoxGenres" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" Width="194" Margin="12,93,0,0" Height="139" VerticalAlignment="Top"/>
-                <ComboBox x:Name="ComboBoxGenresAdd" HorizontalAlignment="Left" Margin="211,93,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" Loaded="ComboBoxGenresAdd_Loaded"/>
-                <ComboBox x:Name="ComboBoxGenresDelete" HorizontalAlignment="Left" Margin="211,153,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name"/>
+                <ComboBox x:Name="ComboBoxGenresAdd" HorizontalAlignment="Left" Margin="211,93,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresAdd_SelectionChanged"/>
+                <ComboBox x:Name="ComboBoxGenresRemove" HorizontalAlignment="Left" Margin="211,153,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding ListOfGuidAndString}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresRemove_SelectionChanged"/>
+                <CheckBox x:Name="CheckBoxGenreUndefined" Content="Не определено" HorizontalAlignment="Left" Margin="70,68,0,0" VerticalAlignment="Top" Click="CheckBoxGenreUndefined_Click"/>
             </Grid>
         </Border>
     </Grid>

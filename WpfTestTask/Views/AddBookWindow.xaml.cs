@@ -2,6 +2,7 @@
 using Microsoft.Windows.Themes;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,11 +29,11 @@ namespace WpfTestTask
         public AddBookWindow()
         {
             InitializeComponent();
-        }
 
-        private void ComboBoxGenresInitialize()
-        {
-
+            List<ListOfGuidAndString> genres = GenreController.SelectGenresToListOfGuidAndString();
+            ComboBoxGenresAdd.ItemsSource = genres;
+            ComboBoxGenresRemove.ItemsSource = genres;
+            ListBoxGenres.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Genre", System.ComponentModel.ListSortDirection.Ascending));
         }
 
         #region Функции обработок кнопок
@@ -175,16 +176,6 @@ namespace WpfTestTask
         }
         #endregion
 
-        private void ComboBoxGenresAdd_Loaded(object sender, RoutedEventArgs e)
-        {
-            List<ListOfGuidAndString> genres = GenreController.SelectGenresToListOfGuidAndString();
-            if (genres.Count > 0)
-            {
-                ComboBoxGenresAdd.ItemsSource = genres;
-                ComboBoxGenresAdd.SelectedItem = genres.First();
-            }
-        }
-
         private void LabelCoverName_Loaded(object sender, RoutedEventArgs e)
         {
             LabelCoverName.Visibility = Visibility.Hidden;
@@ -193,6 +184,66 @@ namespace WpfTestTask
         private void TextBoxError_Loaded(object sender, RoutedEventArgs e)
         {
             TextBoxError.BorderBrush = Brushes.White;
+        }
+
+        private void ComboBoxGenresAdd_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListOfGuidAndString item = (ListOfGuidAndString)ComboBoxGenresAdd.SelectedItem;
+            if (item != null) UpdateListBoxGenres(item, true);
+        }
+
+        private void ComboBoxGenresRemove_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListOfGuidAndString item = (ListOfGuidAndString)ComboBoxGenresRemove.SelectedItem;
+            if (item != null) UpdateListBoxGenres(item, false);
+        }
+
+        private void UpdateListBoxGenres(ListOfGuidAndString item, bool isAdd)
+        {
+            switch (isAdd)
+            {
+                case true:
+                    {
+                        ComboBoxGenresAdd.SelectedItem = null;
+                        if (ListBoxGenres.Items.IndexOf(item) == -1)
+                            ListBoxGenres.Items.Add(item);
+                        break;
+                    }
+                case false:
+                    {
+                        ComboBoxGenresRemove.SelectedItem = null;
+                        if (ListBoxGenres.Items.IndexOf(item) != -1)
+                            ListBoxGenres.Items.Remove(item);
+                        break;
+                    }
+            }
+        }
+
+        private void CheckBoxGenreUndefined_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)CheckBoxGenreUndefined.IsChecked)
+            {
+                ListBoxGenres.Items.Clear();
+                ListBoxGenres.IsEnabled = false;
+                ListBoxGenres.Visibility = Visibility.Hidden;
+                LabelGenreAdd.Visibility = Visibility.Hidden;
+                LabelGenreRemove.Visibility = Visibility.Hidden;
+                ComboBoxGenresAdd.IsEnabled = false;
+                ComboBoxGenresAdd.Visibility = Visibility.Hidden;
+                ComboBoxGenresRemove.IsEnabled = false;
+                ComboBoxGenresRemove.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                ListBoxGenres.IsEnabled = true;
+                ListBoxGenres.Visibility = Visibility.Visible;
+                LabelGenreAdd.Visibility = Visibility.Visible;
+                LabelGenreRemove.Visibility = Visibility.Visible;
+                ComboBoxGenresAdd.IsEnabled = true;
+                ComboBoxGenresAdd.Visibility = Visibility.Visible;
+                ComboBoxGenresRemove.IsEnabled = true;
+                ComboBoxGenresRemove.Visibility = Visibility.Visible;
+            }
         }
     }
 }
