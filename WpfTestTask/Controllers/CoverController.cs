@@ -12,7 +12,7 @@ namespace WpfTestTask.Controllers
     static class CoverController
     {
         #region Выборка данных
-        public static string SelectCoverText(Guid id)
+        public static string SelectCoverTextData(Guid id)
         {
             string command = $"SELECT cover.\"CoverText\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{id}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
@@ -22,7 +22,7 @@ namespace WpfTestTask.Controllers
             return coverText;
         }
 
-        public static byte[] SelectCover(Guid id)
+        public static byte[] SelectCoverData(Guid id)
         {
             string command = $"SELECT cover.\"Cover\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{id}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);

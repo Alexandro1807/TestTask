@@ -13,7 +13,7 @@
         <TextBox x:Name="TextBoxMiddleName" HorizontalAlignment="Left" Margin="161,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Отчество автора"/>
         <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="161,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="ISBN книги"/>
         <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="150" ToolTip="Краткое содержание" AcceptsReturn="True"/>
-        <TextBox x:Name="TextBoxError" HorizontalAlignment="Left" Margin="161,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="736" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="20" BorderBrush="Black" SelectionBrush="White" Loaded="TextBoxError_Loaded"/>
+        <TextBox x:Name="TextBoxError" HorizontalAlignment="Left" Margin="161,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="736" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="20" BorderBrush="Black" SelectionBrush="{x:Null}" Loaded="TextBoxError_Loaded" Background="White" SelectionTextBrush="{x:Null}" SelectionOpacity="0"/>
         <Label Content="Название книги" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>

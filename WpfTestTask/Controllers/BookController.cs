@@ -13,9 +13,9 @@ namespace WpfTestTask.Controllers
     static class BookController
     {
         #region Выборка данных
-        public static BindingList<Book> SelectDataBooks() //Получение данных таблиц Books, GenresOfbook, Covers
+        public static BindingList<Book> SelectBooksData() //Получение данных таблиц Books, GenresOfbook, Covers
         {
-            string command = "SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\", (SELECT cover.\"CoverText\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = b.\"Id\" ORDER BY cover.\"LastModified\" DESC LIMIT 1), (SELECT cover.\"Cover\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = b.\"Id\" ORDER BY cover.\"LastModified\" DESC LIMIT 1) FROM public.\"Books\" b";
+            string command = "SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\" FROM public.\"Books\" b";
             DataTable dataTable = PSqlConnection.SelectData(command);
             BindingList<Book> books = new BindingList<Book>();
             foreach (DataRow row in dataTable.Rows)
@@ -34,15 +34,59 @@ namespace WpfTestTask.Controllers
                 isbn = row["ISBN"].ToString();
                 shortcut = row["Shortcut"].ToString();
 
-                List<Genre> genres = GenreOfBookController.SelectGenresOfBook(id);
+                List<Genre> genres = GenreOfBookController.SelectGenresOfBookData(id);
                 string genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
 
-                string coverText = CoverController.SelectCoverText(id);
-                byte[] cover = CoverController.SelectCover(id);
+                string coverText = CoverController.SelectCoverTextData(id);
+                byte[] cover = CoverController.SelectCoverData(id);
 
                 books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
             }
             return books;
+        }
+
+        public static BindingList<Book> SelectDataBooksWithFunction(int limit, int offset) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
+        {
+            string command = $"SELECT * FROM /*название функции*/ ";
+            //ExecuteFunction(command)
+            string commandOld = $"SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\" FROM public.\"Books\" b LIMIT {limit} OFFSET {offset}";
+            DataTable dataTable = PSqlConnection.SelectData(commandOld);
+            BindingList<Book> books = new BindingList<Book>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                Guid id = Guid.Empty;
+                if (!Guid.TryParse(row["Id"].ToString(), out id)) continue;
+                DateTime lastModified = DateTime.Now;
+                if (!DateTime.TryParse(row["LastModified"].ToString(), out lastModified)) continue;
+                int yearOfProduction = 0;
+                if (!int.TryParse(row["YearOfProduction"].ToString(), out yearOfProduction)) continue;
+                string name, firstName, lastName, middleName, isbn, shortcut;
+                name = row["Name"].ToString();
+                firstName = row["FirstName"].ToString();
+                lastName = row["LastName"].ToString();
+                middleName = row["MiddleName"].ToString();
+                isbn = row["ISBN"].ToString();
+                shortcut = row["Shortcut"].ToString();
+
+                List<Genre> genres = GenreOfBookController.SelectGenresOfBookData(id);
+                string genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
+
+                string coverText = CoverController.SelectCoverTextData(id);
+                byte[] cover = CoverController.SelectCoverData(id);
+
+                books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
+            }
+            return books;
+        }
+
+        public static int SelectBooksCount() //Получение всех строк таблицы Books
+        {
+            string command = $"SELECT COUNT(*) FROM public.\"Books\"";
+            DataTable dataTable = PSqlConnection.SelectData(command);
+            int booksCount = 0;
+            foreach (DataRow row in dataTable.Rows)
+                booksCount = int.Parse(row["count"].ToString());
+            return booksCount;
         }
         #endregion
 

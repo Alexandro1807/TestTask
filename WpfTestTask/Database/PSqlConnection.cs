@@ -33,11 +33,20 @@ namespace WpfTestTask.Database
         private static void PSqlCommand(string command) //Инициализация команды
         {
             sqlCommand = new NpgsqlCommand();
+            sqlCommand.CommandType = CommandType.Text;
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = command;
         }
 
-        public static DataTable SelectData(string command) //Простое получение данных и возврат в любом виде
+        private static void PSqlCommandOnStoredProcedure(string command) //Инициализация команды для вызова хранимой процедуры
+        {
+            sqlCommand = new NpgsqlCommand();
+            sqlCommand.CommandType = CommandType.Text;
+            sqlCommand.Connection = sqlConnection;
+            sqlCommand.CommandText = command;
+        }
+
+        public static DataTable SelectData(string command) //Получение данных и возврат в виде DataTable
         {
             DataTable dataTable = new DataTable();
             try
@@ -52,10 +61,26 @@ namespace WpfTestTask.Database
             {
                 PSqlConnectionClosed();
             }
-
         }
 
-        public static bool InsertData(string command) //Простое сохранение данных
+        public static DataTable ExecuteStoredProcedure(string command) //Вызов хранимой процедуры
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                PSqlConnectionOpen();
+                PSqlCommand(command);
+                NpgsqlDataReader dataReader = sqlCommand.ExecuteReader();
+                dataTable.Load(dataReader);
+                return dataTable;
+            }
+            finally
+            {
+                PSqlConnectionClosed();
+            }
+        }
+
+        public static bool InsertData(string command) //Сохранение данных
         {
             try
             {

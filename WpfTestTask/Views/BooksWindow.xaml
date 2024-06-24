@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Книги" Height="450" Width="1172" ResizeMode="NoResize">
+        Title="Книги" Height="471" Width="1172" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="DataGridBooks" Margin="143,10,10,50" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged">
+        <DataGrid x:Name="DataGridBooks" Margin="143,10,10,0" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged" Height="387" VerticalAlignment="Top">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding CoverText}" IsReadOnly="true" Header="ОбложкаСсылка" />
                 <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="ID" />
@@ -21,12 +21,21 @@
                 <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,294,0,0" VerticalAlignment="Top" Click="ButtonGetBooks_Click" HorizontalAlignment="Left" Width="128"/>
-        <Button x:Name="ButtonOpenAddBookWindow" Content="Добавить книгу" HorizontalAlignment="Left" Margin="10,319,0,0" VerticalAlignment="Top" Click="ButtonOpenAddBookWindow_Click" Width="128"/>
-        <Border BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128">
+        <Button x:Name="ButtonGetBooks" Content="Просмотреть книги" Margin="9,402,0,0" Click="ButtonGetBooks_Click" HorizontalAlignment="Left" Width="128" Height="20" VerticalAlignment="Top"/>
+        <Button x:Name="ButtonOpenAddBookWindow" Content="Добавить книгу" HorizontalAlignment="Left" Margin="143,402,0,0" Click="ButtonOpenAddBookWindow_Click" Width="128" Loaded="ButtonOpenAddBookWindow_Loaded" Height="20" VerticalAlignment="Top"/>
+        <Border x:Name="BorderImage" BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Loaded="BorderImage_Loaded">
             <Image x:Name="ImageCover" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
-        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,143,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="146" VerticalAlignment="Top"/>
-
+        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,143,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="143" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
+        <TextBox x:Name="TextBoxPage" Text="1" PreviewTextInput="TextBoxPage_PreviewTextInput" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="34,346,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="78" Height="20" Loaded="TextBoxPage_Loaded" TextChanged="TextBoxPage_TextChanged" PreviewKeyDown="TextBoxPage_PreviewKeyDown"/>
+        <Button x:Name="ButtonPageNext" Content="→" HorizontalAlignment="Left" Margin="118,346,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPageNext_Click" Loaded="ButtonPageNext_Loaded" Height="20"/>
+        <Button x:Name="ButtonPagePrev" Content="←" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPagePrev_Click" Loaded="ButtonPagePrev_Loaded"/>
+        <Label x:Name="LabelPageCurrentMin" Content="0" HorizontalAlignment="Left" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Margin="10,316,0,0" Width="27" Height="25" VerticalAlignment="Top" Loaded="LabelPageCurrent_Loaded"/>
+        <Label x:Name="LabelPageTo" Content="-" HorizontalAlignment="Left" Margin="30,316,0,0" VerticalAlignment="Top" Width="15" Height="25" Loaded="LabelTo_Loaded"/>
+        <Label x:Name="LabelPageCurrentMax" Content="0" HorizontalAlignment="Left" Margin="38,316,0,0" VerticalAlignment="Top" Width="28" Height="25" Loaded="LabelPageCurrentMax_Loaded"/>
+        <Label x:Name="LabelPageFrom" Content="из" HorizontalAlignment="Left" Margin="70,316,0,0" VerticalAlignment="Top" Width="24" Height="25" Loaded="LabelFrom_Loaded"/>
+        <Label x:Name="LabelPageMax" Content="0" HorizontalAlignment="Left" Margin="87,316,0,0" VerticalAlignment="Top" Width="51" Height="25" Loaded="LabelPageMax_Loaded"/>
+        <Label Content="Кол-во книг:" HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top" Width="79"/>
+        <ComboBox x:Name="ComboBoxPageCount" HorizontalAlignment="Left" Margin="94,371,0,0" VerticalAlignment="Top" Width="44" Loaded="ComboBoxPageCount_Loaded" Height="26" SelectedItem="3" SelectionChanged="ComboBoxPageCount_SelectionChanged"/>
     </Grid>
 </Window>

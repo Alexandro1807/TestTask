@@ -26,7 +26,6 @@ namespace WpfTestTask
     public partial class AddBookWindow : Window
     {
         byte[] _cover = null;
-        BitmapImage BM;
         public AddBookWindow()
         {
             InitializeComponent();
@@ -51,8 +50,7 @@ namespace WpfTestTask
                 //    encoder.Save(MS);
                 //    _cover = MS.ToArray();
                 //}
-                
-                _cover = File.ReadAllBytes(dialog.FileName);
+
                 //using (FileStream pgFileStream = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read))
                 //{
                 //    using (BinaryReader pgReader = new BinaryReader(new BufferedStream(pgFileStream)))
@@ -60,6 +58,8 @@ namespace WpfTestTask
                 //        _cover = pgReader.ReadBytes(Convert.ToInt32(pgFileStream.Length));
                 //    }
                 //}
+
+                _cover = File.ReadAllBytes(dialog.FileName);
                 LabelCoverName.Content += dialog.FileName;
                 LabelCoverName.Visibility = Visibility.Visible;
             }

@@ -27,7 +27,7 @@ namespace WpfTestTask.Controllers
             return genresOnRow;
         }
 
-        public static List<Genre> SelectGenresOfBook(Guid bookId)
+        public static List<Genre> SelectGenresOfBookData(Guid bookId)
         {
             string command = $"SELECT genre.\"Id\", genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
             DataTable dataTable = PSqlConnection.SelectData(command);
