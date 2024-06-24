@@ -2,19 +2,19 @@
 +- добавление хранилища обложек книги (не умею корректно сохранять массив байтов и считывать его)
 
 +- добавление новых книг
+	- анимация добавления книги
 	- проверка полей на адекватность
 	- добавление формата строки для ISBN (***-*-****-****-*)
 - редактирование имеющихся книг
 - удаление существующих книг
 
 
-- поиск по полям; реализация на стороне СУБД (хранимые процедуры??? в PostgreSQL)
++-- поиск по полям; реализация на стороне СУБД (хранимые процедуры??? в PostgreSQL)
 	(Название)
-	(ФИО автора)
+	(ФИО автора) - ввод любой части ФИО
 	(Год выпуска)
-	(Жанр)
-+- постраничный вывод результатов; реализация на стороне СУБД (хранимые процедуры??? в PostgreSQL) (SELECT TOP(10)) ??? (SELECT RANGE(10, 20))
-
+	(Жанр) - выбор одного жанра из ComboBox
+- запуск скрипта фильтрации через 0,5 сек после обновления любого из полей (кроме ComboBox)
 
 - добавить всем методам ///Описание метода
 - сгруппировать методы по регионам #region
@@ -30,14 +30,17 @@
 - Размещение БД на удалённом сервере (для этого необходимо арендовать хостинг).
 
 
---Функция 1
+--Функции
+DROP FUNCTION bookpagefilter(integer,integer);
+CREATE OR REPLACE FUNCTION BookPageFilter(in intLimit int, in intOffset int) RETURNS SETOF public."Books"
+AS $$
+SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
+FROM public."Books" b
+LIMIT intLimit OFFSET intOffset
+$$
+LANGUAGE SQL;
 
-CREATE FUNCTION BookPageFilter(in intLimit int, in intOffset int) RETURNS public."Books"
-    AS $$
-	SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-	FROM public."Books" b
-	LIMIT intLimit OFFSET intOffset
-	$$
-    LANGUAGE SQL;
+--Добавление перегрузок одной функции под разные фильтры
 
+--Проверка функции
 SELECT * FROM BookPageFilter(3, 3);

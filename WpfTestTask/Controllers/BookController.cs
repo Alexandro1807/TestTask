@@ -45,12 +45,10 @@ namespace WpfTestTask.Controllers
             return books;
         }
 
-        public static BindingList<Book> SelectDataBooksWithFunction(int limit, int offset) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
+        public static BindingList<Book> SelectDataBooksWithFunction(int limit, int offset, out int rowCount) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
         {
-            string command = $"SELECT * FROM /*название функции*/ ";
-            //ExecuteFunction(command)
-            string commandOld = $"SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\" FROM public.\"Books\" b LIMIT {limit} OFFSET {offset}";
-            DataTable dataTable = PSqlConnection.SelectData(commandOld);
+            string command = $"SELECT * FROM BookPageFilter({limit}, {offset});";
+            DataTable dataTable = PSqlConnection.SelectData(command);
             BindingList<Book> books = new BindingList<Book>();
             foreach (DataRow row in dataTable.Rows)
             {
@@ -76,6 +74,7 @@ namespace WpfTestTask.Controllers
 
                 books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
             }
+            rowCount = books.Count;
             return books;
         }
 

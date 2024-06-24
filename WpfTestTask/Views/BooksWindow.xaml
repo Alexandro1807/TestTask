@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Книги" Height="471" Width="1172" ResizeMode="NoResize">
+        Title="Книги" Height="528" Width="1172" ResizeMode="NoResize">
     <Grid>
         <DataGrid x:Name="DataGridBooks" Margin="143,10,10,0" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged" Height="387" VerticalAlignment="Top">
             <DataGrid.Columns>
@@ -22,11 +22,10 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="ButtonGetBooks" Content="Просмотреть книги" Margin="9,402,0,0" Click="ButtonGetBooks_Click" HorizontalAlignment="Left" Width="128" Height="20" VerticalAlignment="Top"/>
-        <Button x:Name="ButtonOpenAddBookWindow" Content="Добавить книгу" HorizontalAlignment="Left" Margin="143,402,0,0" Click="ButtonOpenAddBookWindow_Click" Width="128" Loaded="ButtonOpenAddBookWindow_Loaded" Height="20" VerticalAlignment="Top"/>
         <Border x:Name="BorderImage" BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Loaded="BorderImage_Loaded">
             <Image x:Name="ImageCover" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
-        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,143,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="143" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
+        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,143,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="168" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
         <TextBox x:Name="TextBoxPage" Text="1" PreviewTextInput="TextBoxPage_PreviewTextInput" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="34,346,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="78" Height="20" Loaded="TextBoxPage_Loaded" TextChanged="TextBoxPage_TextChanged" PreviewKeyDown="TextBoxPage_PreviewKeyDown"/>
         <Button x:Name="ButtonPageNext" Content="→" HorizontalAlignment="Left" Margin="118,346,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPageNext_Click" Loaded="ButtonPageNext_Loaded" Height="20"/>
         <Button x:Name="ButtonPagePrev" Content="←" HorizontalAlignment="Left" Margin="10,346,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPagePrev_Click" Loaded="ButtonPagePrev_Loaded"/>
@@ -36,6 +35,21 @@
         <Label x:Name="LabelPageFrom" Content="из" HorizontalAlignment="Left" Margin="70,316,0,0" VerticalAlignment="Top" Width="24" Height="25" Loaded="LabelFrom_Loaded"/>
         <Label x:Name="LabelPageMax" Content="0" HorizontalAlignment="Left" Margin="87,316,0,0" VerticalAlignment="Top" Width="51" Height="25" Loaded="LabelPageMax_Loaded"/>
         <Label Content="Кол-во книг:" HorizontalAlignment="Left" Margin="10,371,0,0" VerticalAlignment="Top" Width="79"/>
-        <ComboBox x:Name="ComboBoxPageCount" HorizontalAlignment="Left" Margin="94,371,0,0" VerticalAlignment="Top" Width="44" Loaded="ComboBoxPageCount_Loaded" Height="26" SelectedItem="3" SelectionChanged="ComboBoxPageCount_SelectionChanged"/>
+        <ComboBox x:Name="ComboBoxPageCount" HorizontalAlignment="Left" Margin="94,371,0,0" VerticalAlignment="Top" Width="44" Height="26" SelectedItem="15" SelectionChanged="ComboBoxPageCount_SelectionChanged" Loaded="ComboBoxPageCount_Loaded"/>
+        <GroupBox Header="Фильтры" Margin="276,402,10,0" Height="70" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" Margin="4, 4, 4, 4">Фамилия:</TextBlock>
+                <TextBox VerticalAlignment="Center" Height="25" Width="100" Margin="4, 4, 4, 4"/>
+                <TextBlock VerticalAlignment="Center" Margin="4, 4, 4, 4">Автор:</TextBlock>
+                <TextBox VerticalAlignment="Center" Height="25" Width="100" Margin="4, 4, 4, 4"/>
+                <TextBlock VerticalAlignment="Center" Margin="4, 4, 4, 4">Жанр:</TextBlock>
+                <TextBox VerticalAlignment="Center" Height="25" Width="100" Margin="4, 4, 4, 4"/>
+                <TextBlock VerticalAlignment="Center" Margin="4, 4, 4, 4">Год выпуска:</TextBlock>
+                <TextBox VerticalAlignment="Center" Height="25" Width="100" Margin="4, 4, 4, 4"/>
+            </StackPanel>
+        </GroupBox>
+        <Button x:Name="ButtonOpenAddBookWindow" Content="Добавить книгу" HorizontalAlignment="Left" Margin="143,402,0,0" Click="ButtonOpenAddBookWindow_Click" Width="128" Loaded="ButtonOpenAddBookWindow_Loaded" Height="20" VerticalAlignment="Top"/>
+        <Button x:Name="ButtonOpenEditBookWindow" Content="Редактировать книгу" HorizontalAlignment="Left" Margin="143,427,0,0" VerticalAlignment="Top" Height="20" Width="128" Loaded="ButtonOpenEditBookWindow_Loaded" Click="ButtonOpenEditBookWindow_Click"/>
+        <Button x:Name="ButtonOpenDeleteBookWindow" Content="Удалить книгу" HorizontalAlignment="Left" Margin="143,452,0,0" Width="128" Height="20" VerticalAlignment="Top" Loaded="ButtonOpenDeleteBookWindow_Loaded" Click="ButtonOpenDeleteBookWindow_Click"/>
     </Grid>
 </Window>

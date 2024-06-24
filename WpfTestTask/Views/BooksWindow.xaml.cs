@@ -38,13 +38,16 @@ namespace WpfTestTask
         {
             int booksCount = BookController.SelectBooksCount();
             LabelPageMax.Content = booksCount;
-            for (int i = booksCount + 1; i <= 100; i++) ComboBoxPageCount.Items.Remove(i.ToString());
+            ComboBoxPageCount.Items.Remove(15);
+            for (int i = 1; i <= Math.Min(booksCount, 100); i++) ComboBoxPageCount.Items.Add(i.ToString());
+            ComboBoxPageCount.SelectedItem = Math.Min(booksCount, 15).ToString();
             InitializeFormToEndState();
             RefreshForm();
         }
 
         private void InitializeFormToEndState()
         {
+            ComboBoxPageCount.IsEnabled = true;
             LabelPageCurrentMin.Visibility = Visibility.Visible;
             LabelPageTo.Visibility = Visibility.Visible;
             LabelPageCurrentMax.Visibility = Visibility.Visible;
@@ -55,6 +58,7 @@ namespace WpfTestTask
             BorderImage.Visibility = Visibility.Visible;
             ButtonPageNext.Visibility = Visibility.Visible;
             ButtonPagePrev.Visibility = Visibility.Visible;
+            ButtonOpenAddBookWindow.Visibility = Visibility.Visible;
             ButtonGetBooks.Visibility = Visibility.Collapsed;
             _isInitialized = true;
         }
@@ -63,10 +67,13 @@ namespace WpfTestTask
         {
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
-            _bookList = BookController.SelectDataBooksWithFunction(limit, offset);
+            int rowCount = 0;
+            _bookList = BookController.SelectDataBooksWithFunction(limit, offset, out rowCount);
             DataGridBooks.ItemsSource = _bookList;
-            LabelPageCurrentMin.Content = 1;
-            LabelPageCurrentMax.Content = limit + offset;
+            LabelPageCurrentMin.Content = offset + 1;
+            LabelPageCurrentMax.Content = offset + rowCount;
+            ImageCover.Source = null;
+            TextBoxShortcut.Text = string.Empty;
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
@@ -83,7 +90,6 @@ namespace WpfTestTask
                 Book book = (sender as DataGrid).SelectedItem as Book;
                 if (book == null) return;
                 TextBoxShortcut.Text = book.Shortcut == string.Empty ? "Краткое содержание не определено." : book.Shortcut;
-
                 if (book.CoverText != "underfined")
                     ImageCover.Source = new BitmapImage(new Uri(book.CoverText));
                 else ImageCover.Source = null;
@@ -129,11 +135,6 @@ namespace WpfTestTask
             if (textBoxPage > 1) TextBoxPage.Text = string.Format($"{textBoxPage - 1}");
         }
 
-        private void LabelPageCurrent_Loaded(object sender, RoutedEventArgs e)
-        {
-            LabelPageCurrentMin.Visibility = Visibility.Hidden;
-        }
-
         private void ButtonPageNext_Loaded(object sender, RoutedEventArgs e)
         {
             ButtonPageNext.Content = ">>";
@@ -144,6 +145,11 @@ namespace WpfTestTask
         {
             ButtonPagePrev.Content = "<<";
             ButtonPagePrev.Visibility = Visibility.Hidden;
+        }
+
+        private void LabelPageCurrent_Loaded(object sender, RoutedEventArgs e)
+        {
+            LabelPageCurrentMin.Visibility = Visibility.Hidden;
         }
 
         private void TextBoxPage_Loaded(object sender, RoutedEventArgs e)
@@ -167,6 +173,7 @@ namespace WpfTestTask
 
         private void TextBoxPage_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (TextBoxPage.Text == "") return;
             if (_isInitialized) RefreshForm(); //Обновление формы (повторный вызов функции)
         }
 
@@ -208,17 +215,41 @@ namespace WpfTestTask
 
         private void ComboBoxPageCount_Loaded(object sender, RoutedEventArgs e)
         {
-            for (int i = 1; i <= 100; i++) ComboBoxPageCount.Items.Add(i.ToString());
+            ComboBoxPageCount.Items.Add(25);
+            ComboBoxPageCount.SelectedItem = 25;
+            ComboBoxPageCount.IsEnabled = false;
         }
 
         private void ComboBoxPageCount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!_isInitialized) return;
             int maxPage = int.Parse(LabelPageMax.Content.ToString());
             if (maxPage == 0) return;
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             _pageCount = (int)Math.Round((double)maxPage / limit, MidpointRounding.ToPositiveInfinity);
+            if (TextBoxPage.Text == "1") TextBoxPage.Text = "";
             TextBoxPage.Text = "1";
         }
         #endregion
+
+        private void ButtonOpenEditBookWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            ButtonOpenEditBookWindow.Visibility = Visibility.Hidden;
+        }
+
+        private void ButtonOpenDeleteBookWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            ButtonOpenDeleteBookWindow.Visibility = Visibility.Hidden;
+        }
+
+        private void ButtonOpenEditBookWindow_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonOpenDeleteBookWindow_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
