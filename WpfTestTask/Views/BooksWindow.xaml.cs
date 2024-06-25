@@ -18,6 +18,7 @@ using WpfTestTask.Controllers;
 using System.IO;
 using WpfTestTask.Additional;
 using System.Windows.Media.Media3D;
+using System.Threading;
 
 namespace WpfTestTask
 {
@@ -29,11 +30,23 @@ namespace WpfTestTask
         private BindingList<Book> _bookList;
         private bool _isInitialized = false;
         private int _pageCount = 1;
+        private bool _isRefreshingFilterFlag = false;
+        private Timer _refreshingFilterTimer = null;
         public BooksWindow()
         {
             InitializeComponent();
-        }
 
+            List<Genre> genres = GenreController.SelectGenresWithUndefinedToList();
+            ComboBoxGenresFilter.ItemsSource = genres;
+        }
+        #region Инициализация формы
+        #endregion
+        #region Функции нажатия кнопок
+        #endregion
+        #region Дополнительные функции
+        #endregion
+        #region События изменений на форме
+        #endregion
         private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
         {
             int booksCount = BookController.SelectBooksCount();
@@ -48,6 +61,7 @@ namespace WpfTestTask
         private void InitializeFormToEndState()
         {
             ComboBoxPageCount.IsEnabled = true;
+            LabelISBN.Visibility = Visibility.Visible;
             LabelPageCurrentMin.Visibility = Visibility.Visible;
             LabelPageTo.Visibility = Visibility.Visible;
             LabelPageCurrentMax.Visibility = Visibility.Visible;
@@ -55,25 +69,35 @@ namespace WpfTestTask
             LabelPageMax.Visibility = Visibility.Visible;
             TextBoxPage.Visibility = Visibility.Visible;
             TextBoxShortcut.Visibility = Visibility.Visible;
+            TextBoxISBN.Visibility = Visibility.Visible;
             BorderImage.Visibility = Visibility.Visible;
             ButtonPageNext.Visibility = Visibility.Visible;
             ButtonPagePrev.Visibility = Visibility.Visible;
             ButtonOpenAddBookWindow.Visibility = Visibility.Visible;
+            ButtonOpenEditBookWindow.Visibility = Visibility.Visible;
+            ButtonOpenDeleteBookWindow.Visibility = Visibility.Visible;
+            GroupBoxFilters.Visibility = Visibility.Visible;
             ButtonGetBooks.Visibility = Visibility.Collapsed;
             _isInitialized = true;
         }
 
         private void RefreshForm()
         {
+            //Установка фильтров
+            lock (string.Empty) _isRefreshingFilterFlag = false;
+
+
+
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
             int rowCount = 0;
             _bookList = BookController.SelectDataBooksWithFunction(limit, offset, out rowCount);
             DataGridBooks.ItemsSource = _bookList;
-            LabelPageCurrentMin.Content = offset + 1;
-            LabelPageCurrentMax.Content = offset + rowCount;
             ImageCover.Source = null;
             TextBoxShortcut.Text = string.Empty;
+            TextBoxISBN.Text = string.Empty;
+            LabelPageCurrentMin.Content = offset + 1;
+            LabelPageCurrentMax.Content = offset + rowCount;
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
@@ -82,7 +106,6 @@ namespace WpfTestTask
             win.Show();
         }
 
-        #region События изменений на форме
         private void DataGridBooks_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -90,10 +113,11 @@ namespace WpfTestTask
                 Book book = (sender as DataGrid).SelectedItem as Book;
                 if (book == null) return;
                 TextBoxShortcut.Text = book.Shortcut == string.Empty ? "Краткое содержание не определено." : book.Shortcut;
+                TextBoxISBN.Text = book.ISBN == string.Empty ? "Не определено." : book.ISBN;
                 if (book.CoverText != "underfined")
-                    ImageCover.Source = new BitmapImage(new Uri(book.CoverText));
-                else ImageCover.Source = null;
-                //Починить обработку изображения через байтовый массив, после чего разблокировать
+                    { ImageCover.Source = new BitmapImage(new Uri(book.CoverText)); TextBlockImageNotFound.Visibility = Visibility.Hidden; }
+                else { ImageCover.Source = null; TextBlockImageNotFound.Visibility = Visibility.Visible; }
+                //Починить обработку изображения через байтовый массив, после чего раскомментировать
                 //if (book.Cover != null && book.Cover.Length != 0)
                 //{
                 //    using (MemoryStream memoryStream = new MemoryStream(book.Cover))
@@ -215,8 +239,8 @@ namespace WpfTestTask
 
         private void ComboBoxPageCount_Loaded(object sender, RoutedEventArgs e)
         {
-            ComboBoxPageCount.Items.Add(25);
-            ComboBoxPageCount.SelectedItem = 25;
+            ComboBoxPageCount.Items.Add(15);
+            ComboBoxPageCount.SelectedItem = 15;
             ComboBoxPageCount.IsEnabled = false;
         }
 
@@ -230,7 +254,11 @@ namespace WpfTestTask
             if (TextBoxPage.Text == "1") TextBoxPage.Text = "";
             TextBoxPage.Text = "1";
         }
-        #endregion
+
+        private void GroupBoxFilters_Loaded(object sender, RoutedEventArgs e)
+        {
+            GroupBoxFilters.Visibility = Visibility.Hidden;
+        }
 
         private void ButtonOpenEditBookWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -251,5 +279,60 @@ namespace WpfTestTask
         {
 
         }
+
+        private void ButtonClearFilters_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LabelISBN_Loaded(object sender, RoutedEventArgs e)
+        {
+            LabelISBN.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBoxISBN_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBoxISBN.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBlockImageNotFound_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBlockImageNotFound.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBoxNameFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            RefreshingFilterAsync();
+        }
+
+        private void TextBoxAuthorFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            RefreshingFilterAsync();
+        }
+
+        private void ComboBoxGenresFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RefreshingFilterAsync();
+        }
+
+        private void TextBoxYearOfProductionFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            RefreshingFilterAsync();
+        }
+
+        private async void RefreshingFilterAsync()
+        {
+            lock (string.Empty) _isRefreshingFilterFlag = false;
+            if (_refreshingFilterTimer != null) _refreshingFilterTimer.Dispose();
+            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterFlagUnlockOnTimer), TextBoxNameFilter, 2000, Timeout.Infinite);
+            await Task.Delay(2000);
+            if (_isRefreshingFilterFlag) RefreshForm();
+        }
+
+        private void RefreshingFilterFlagUnlockOnTimer(object timerState)
+        {
+            lock (string.Empty) _isRefreshingFilterFlag = true;
+        }
+
     }
 }

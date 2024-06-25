@@ -31,14 +31,37 @@
 
 
 --Функции
-DROP FUNCTION bookpagefilter(integer,integer);
-CREATE OR REPLACE FUNCTION BookPageFilter(in intLimit int, in intOffset int) RETURNS SETOF public."Books"
+DROP FUNCTION IF EXISTS BookPageFilter(integer,integer);
+CREATE OR REPLACE FUNCTION BookPageFilter(bLimit int, bOffset int) RETURNS SETOF public."Books"
 AS $$
 SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
 FROM public."Books" b
-LIMIT intLimit OFFSET intOffset
+ORDER BY b."LastModified"
+LIMIT bLimit OFFSET bOffset
 $$
 LANGUAGE SQL;
+
+DROP FUNCTION IF EXISTS BookNameFilter(int,int,text);
+CREATE OR REPLACE FUNCTION BookNameFilter(bLimit int, bOffset int, bName text default 'underfined') RETURNS SETOF public."Books"
+AS $$
+SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
+FROM BookPageFilter(bLimit, bOffset) b
+WHERE b."Name" = bName
+$$
+LANGUAGE SQL;
+
+DROP FUNCTION IF EXISTS BookYearOfProductionFilter(int,int,int);
+CREATE OR REPLACE FUNCTION BookYearOfProductionFilter(bLimit int, bOffset int, bYear int default -1) RETURNS SETOF public."Books"
+AS $$
+SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
+FROM BookPageFilter(bLimit, bOffset) b
+WHERE b."YearOfProduction" = bYear
+$$
+LANGUAGE SQL;
+
+//Функции для поиска автора (фамилия || имя || отчество)
+//Функция для поиска по жанру
+
 
 --Добавление перегрузок одной функции под разные фильтры
 

@@ -13,37 +13,38 @@ namespace WpfTestTask.Controllers
     static class BookController
     {
         #region Выборка данных
-        public static BindingList<Book> SelectBooksData() //Получение данных таблиц Books, GenresOfbook, Covers
-        {
-            string command = "SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\" FROM public.\"Books\" b";
-            DataTable dataTable = PSqlConnection.SelectData(command);
-            BindingList<Book> books = new BindingList<Book>();
-            foreach (DataRow row in dataTable.Rows)
-            {
-                Guid id = Guid.Empty;
-                if (!Guid.TryParse(row["Id"].ToString(), out id)) continue;
-                DateTime lastModified = DateTime.Now;
-                if (!DateTime.TryParse(row["LastModified"].ToString(), out lastModified)) continue;
-                int yearOfProduction = 0;
-                if (!int.TryParse(row["YearOfProduction"].ToString(), out yearOfProduction)) continue;
-                string name, firstName, lastName, middleName, isbn, shortcut;
-                name = row["Name"].ToString();
-                firstName = row["FirstName"].ToString();
-                lastName = row["LastName"].ToString();
-                middleName = row["MiddleName"].ToString();
-                isbn = row["ISBN"].ToString();
-                shortcut = row["Shortcut"].ToString();
+        //Удалить, если не используется
+        //public static BindingList<Book> SelectBooksData() //Получение данных таблиц Books, GenresOfbook, Covers
+        //{
+        //    string command = "SELECT b.\"Id\", b.\"LastModified\", b.\"Name\", b.\"FirstName\", b.\"LastName\", b.\"MiddleName\", b.\"YearOfProduction\", b.\"ISBN\", b.\"Shortcut\" FROM public.\"Books\" b";
+        //    DataTable dataTable = PSqlConnection.SelectData(command);
+        //    BindingList<Book> books = new BindingList<Book>();
+        //    foreach (DataRow row in dataTable.Rows)
+        //    {
+        //        Guid id = Guid.Empty;
+        //        if (!Guid.TryParse(row["Id"].ToString(), out id)) continue;
+        //        DateTime lastModified = DateTime.Now;
+        //        if (!DateTime.TryParse(row["LastModified"].ToString(), out lastModified)) continue;
+        //        int yearOfProduction = 0;
+        //        if (!int.TryParse(row["YearOfProduction"].ToString(), out yearOfProduction)) continue;
+        //        string name, firstName, lastName, middleName, isbn, shortcut;
+        //        name = row["Name"].ToString();
+        //        firstName = row["FirstName"].ToString();
+        //        lastName = row["LastName"].ToString();
+        //        middleName = row["MiddleName"].ToString();
+        //        isbn = row["ISBN"].ToString();
+        //        shortcut = row["Shortcut"].ToString();
 
-                List<Genre> genres = GenreOfBookController.SelectGenresOfBookData(id);
-                string genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
+        //        List<Genre> genres = GenreOfBookController.SelectGenresOfBookData(id);
+        //        string genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
 
-                string coverText = CoverController.SelectCoverTextData(id);
-                byte[] cover = CoverController.SelectCoverData(id);
+        //        string coverText = CoverController.SelectCoverTextData(id);
+        //        byte[] cover = CoverController.SelectCoverData(id);
 
-                books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
-            }
-            return books;
-        }
+        //        books.Add(new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
+        //    }
+        //    return books;
+        //}
 
         public static BindingList<Book> SelectDataBooksWithFunction(int limit, int offset, out int rowCount) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
         {
@@ -72,7 +73,7 @@ namespace WpfTestTask.Controllers
                 string coverText = CoverController.SelectCoverTextData(id);
                 byte[] cover = CoverController.SelectCoverData(id);
 
-                books.Add(new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
+                books.Add(new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, cover));
             }
             rowCount = books.Count;
             return books;

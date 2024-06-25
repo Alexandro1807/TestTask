@@ -30,19 +30,19 @@ namespace WpfTestTask
         {
             InitializeComponent();
 
-            List<Genre> genres = GenreController.SelectGenresToListOfGuidAndString();
+            List<Genre> genres = GenreController.SelectGenresToList();
             ComboBoxGenresAdd.ItemsSource = genres;
             ComboBoxGenresRemove.ItemsSource = genres;
-            ListBoxGenres.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Genre", System.ComponentModel.ListSortDirection.Ascending));
         }
 
-        #region Функции обработок кнопок
         private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new() { AddExtension = true, DefaultExt = ".png", Filter = "PNG (.png)|*.png|JPG (.jpg)|*.jpg|JPEG (.jpeg)|*.jpeg" };
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
+                //ПОПЫТКИ СОХРАНИТЬ ИЗОБРАЖЕНИЕ В ВИДЕ БАЙТОВОГО МАССИВА
+                
                 //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
                 //encoder.Frames.Add(BitmapFrame.Create(new BitmapImage(new Uri(dialog.FileName))));
                 //using (MemoryStream MS = new MemoryStream())
@@ -50,7 +50,6 @@ namespace WpfTestTask
                 //    encoder.Save(MS);
                 //    _cover = MS.ToArray();
                 //}
-
                 //using (FileStream pgFileStream = new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read))
                 //{
                 //    using (BinaryReader pgReader = new BinaryReader(new BufferedStream(pgFileStream)))
@@ -85,7 +84,7 @@ namespace WpfTestTask
                 genres = GenreOfBookController.SelectGenresOfBookFromListBox(ListBoxGenres.Items);
                 genresOnRow = GenreOfBookController.ConvertGenresToGenresOnRow(genres);
                 coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
-                Book book = new Book(id, lastModified, name, firstName, lastName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, _cover);
+                Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genres, genresOnRow, coverText, _cover);
                 BookController.InsertDataBooks(book);
                 GenreOfBookController.InsertGenresOfBook(book);
                 //CoverController.InsertCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
@@ -97,9 +96,7 @@ namespace WpfTestTask
             }
             
         }
-        #endregion
 
-        #region События изменений на форме
         /// <summary>
         /// Перенос значения элемента slider в элемент Textbox.
         /// </summary>
@@ -186,7 +183,6 @@ namespace WpfTestTask
             await Task.Delay(10000);
             textBox.Visibility = Visibility.Collapsed;
         }
-        #endregion
 
         private void LabelCoverName_Loaded(object sender, RoutedEventArgs e)
         {

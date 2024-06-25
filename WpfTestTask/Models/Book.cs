@@ -21,13 +21,13 @@ namespace WpfTestTask.Models
         public string GenresOnRow { get; set; }
         public string CoverText { get; set; }
         public byte[] Cover { get; set; }
-        public Book(Guid id, DateTime lastModified, string name, string firstName, string lastName, string middleName, int yearOfProduction, string isbn, string shortCut, List<Genre> genres = null, string genresOnRow = null, string coverText = null, byte[] cover = null)
+        public Book(Guid id, DateTime lastModified, string name, string lastName, string firstName, string middleName, int yearOfProduction, string isbn, string shortCut, List<Genre> genres = null, string genresOnRow = null, string coverText = null, byte[] cover = null)
         {
             Id = id;
             LastModified = lastModified;
             Name = name == "" ? "underfined" : name;
-            FirstName = firstName == "" ? "underfined" : firstName;
             LastName = lastName == "" ? "underfined" : lastName;
+            FirstName = firstName == "" ? "underfined" : firstName;
             MiddleName = middleName == "" ? "underfined" : middleName;
             YearOfProduction = yearOfProduction;
             ISBN = isbn == "" ? "underfined" : isbn;
