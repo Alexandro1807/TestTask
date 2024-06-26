@@ -22,7 +22,7 @@
         <Border x:Name="BorderImage" BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Loaded="BorderImage_Loaded">
             <Image x:Name="ImageCover" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
-        <TextBlock x:Name="TextBlockImageNotFound" HorizontalAlignment="Left" Margin="10,58,0,0" TextWrapping="Wrap" Text="Изображение не найдено" VerticalAlignment="Top" Height="32" Width="128" TextAlignment="Center" Loaded="TextBlockImageNotFound_Loaded"/>
+        <TextBlock x:Name="TextBlockImageNotFound" HorizontalAlignment="Left" Margin="10,57,0,0" TextWrapping="Wrap" Text="Изображение не найдено" VerticalAlignment="Top" Height="34" Width="128" TextAlignment="Center" Loaded="TextBlockImageNotFound_Loaded"/>
         <Label x:Name="LabelShortcut" Content="Краткое содержание" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="128" Height="26"/>
         <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,174,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="83" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
         <Label x:Name="LabelISBN" Content="ISBN" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,262,0,0" VerticalAlignment="Top" Width="128" Loaded="LabelISBN_Loaded"/>
@@ -56,5 +56,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
+        <Rectangle x:Name="RectangleRefresh" Height="387" Margin="143,10,10,0" Stroke="Black" VerticalAlignment="Top" Fill="#FF1D9E25" Loaded="RectangleRefresh_Loaded"/>
+        <TextBlock x:Name="TextBlockRefresh" HorizontalAlignment="Left" Margin="143,174,0,0" TextAlignment="Center" TextWrapping="Wrap" Text="Обновление" VerticalAlignment="Top" Height="59" Width="812" FontSize="48" FontFamily="Impact" Loaded="TextBlockRefresh_Loaded"/>
     </Grid>
 </Window>

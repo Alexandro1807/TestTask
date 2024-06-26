@@ -83,11 +83,12 @@ namespace WpfTestTask
 
         private void RefreshForm()
         {
+            //Анимация обновления
+            RefreshAnimationStartAsync();
             //Установка фильтров
             lock (string.Empty) _isRefreshingFilterFlag = false;
 
-
-
+            
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
             int rowCount = 0;
@@ -98,6 +99,39 @@ namespace WpfTestTask
             TextBoxISBN.Text = string.Empty;
             LabelPageCurrentMin.Content = offset + 1;
             LabelPageCurrentMax.Content = offset + rowCount;
+            RefreshAnimationStopAsync();
+        }
+
+        private async void RefreshAnimationStartAsync()
+        {
+            _isInitialized = false;
+            ElementsOfFormTurnOnOrOffAsync();
+            while (!_isInitialized)
+            {
+                string refresh = "Обновление";
+                string[] strings = { ".", "..", "...", "" };
+                foreach (string s in strings)
+                {
+                    await Task.Delay(100);
+                    TextBlockRefresh.Text = refresh + s;
+                }
+            }
+        }
+        
+        private async void RefreshAnimationStopAsync()
+        {
+            await Task.Delay(2000); //Имитация ожидания обработки сервера под высокой нагрузкой
+            _isInitialized = true;
+            ElementsOfFormTurnOnOrOffAsync();
+        }
+
+        private async void ElementsOfFormTurnOnOrOffAsync()
+        {
+            await Task.Delay(1);
+            Visibility visibility = !_isInitialized ? Visibility.Visible : Visibility.Hidden;
+            RectangleRefresh.Visibility = visibility;
+            TextBlockRefresh.Visibility = visibility;
+            TextBoxPage.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = GroupBoxFilters.IsEnabled = _isInitialized;
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
@@ -302,37 +336,46 @@ namespace WpfTestTask
 
         private void TextBoxNameFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterAsync();
+            RefreshingFilterTimerAsync();
         }
 
         private void TextBoxAuthorFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterAsync();
+            RefreshingFilterTimerAsync();
         }
 
         private void ComboBoxGenresFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RefreshingFilterAsync();
+            RefreshingFilterTimerAsync();
         }
 
         private void TextBoxYearOfProductionFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterAsync();
+            RefreshingFilterTimerAsync();
         }
 
-        private async void RefreshingFilterAsync()
+        private async void RefreshingFilterTimerAsync()
         {
             lock (string.Empty) _isRefreshingFilterFlag = false;
             if (_refreshingFilterTimer != null) _refreshingFilterTimer.Dispose();
-            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterFlagUnlockOnTimer), TextBoxNameFilter, 2000, Timeout.Infinite);
-            await Task.Delay(2000);
+            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterTimerSuccess), TextBoxNameFilter, 500, Timeout.Infinite);
+            await Task.Delay(500);
             if (_isRefreshingFilterFlag) RefreshForm();
         }
 
-        private void RefreshingFilterFlagUnlockOnTimer(object timerState)
+        private void RefreshingFilterTimerSuccess(object timerState)
         {
             lock (string.Empty) _isRefreshingFilterFlag = true;
         }
 
+        private void RectangleRefresh_Loaded(object sender, RoutedEventArgs e)
+        {
+            RectangleRefresh.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBlockRefresh_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBlockRefresh.Visibility = Visibility.Hidden;
+        }
     }
 }
