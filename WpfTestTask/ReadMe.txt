@@ -158,11 +158,14 @@ THEN
 
 END IF
 
-	
-SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-FROM BookPageFilter(bLimit, bOffset) b
-JOIN public."GenresOfBook" genre ON b."Id" = genre."BookId"
-JOIN public."Genres" genres ON genre."GenreId" = genres."Id"
-WHERE genres."Genre" = bGenre
+DROP FUNCTION IF EXISTS BookFilter(int,int,text,text,text,int);
+CREATE OR REPLACE FUNCTION BookFilter(bLimit int, bOffset int, bName text default 'underfined', bAuthor text default 'underfined', bGenre text default 'underfined', bYear int default -1) RETURNS SETOF "Books" 
+AS $$
+BEGIN
+IF bAuthor = 'undefined' AND bGenre = 'undefined' AND bYear = -1
+THEN
+	SELECT * FROM BookNameFilter(bLimit, bOffset, bName)
+END IF
+END
 $$
 LANGUAGE SQL;
