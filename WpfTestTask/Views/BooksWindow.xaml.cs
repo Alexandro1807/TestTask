@@ -85,10 +85,12 @@ namespace WpfTestTask
         {
             //Анимация обновления
             RefreshAnimationStartAsync();
-            //Установка фильтров
+            
             lock (string.Empty) _isRefreshingFilterFlag = false;
 
-            
+            //Установка фильтров
+            string nameFilter = TextBoxNameFilter.Text;
+
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
             int rowCount = 0;
