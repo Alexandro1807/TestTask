@@ -115,57 +115,70 @@ LANGUAGE SQL;
 SELECT * FROM BookPageFilter(3, 3);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --Одна большая функция на всё (заменить внутренности вызовами более мелких функций)
 DROP FUNCTION IF EXISTS BookFilter(int,int,text,text,text,int);
-CREATE OR REPLACE FUNCTION BookFilter(blimit int, boffset int, bName text default 'underfined', bAuthor text default 'underfined', bGenre text default 'underfined', bYear int default -1) RETURNS SETOF "Books" 
-AS $$
-
-IF bAuthor = 'undefined' AND bGenre = 'undefined' AND bYear = -1
-THEN
-	SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-	FROM BookPageFilter(bLimit, bOffset) b
-	WHERE b."Name" LIKE CONCAT('%', bName, '%')
-ELSIF bName = 'undefined' AND bGenre = 'undefined' AND bYear = -1
-THEN
-	IF count(string_to_array(bAuthor, ' ')) = 1
-	THEN
-		DECLARE bWord1 = split_part(bAuthor, ' ', 1);
-		SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-		FROM BookPageFilter(bLimit, bOffset) b
-		WHERE b."FirstName" LIKE CONCAT('%', bWord1, '%') OR b."LastName" LIKE CONCAT('%', bWord1, '%') OR b."MiddleName" LIKE CONCAT('%', bWord1, '%')
-	ELSIF count(string_to_array(bAuthor, ' ')) = 2
-	THEN
-		DECLARE bWord1 = split_part(bAuthor, ' ', 1); bWord2 = split_part(bAuthor, ' ', 2);
-		SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-		FROM BookPageFilter(bLimit, bOffset) b
-		WHERE (b."FirstName" LIKE CONCAT('%', bWord1, '%') AND b."LastName" LIKE CONCAT('%', bWord2, '%'))
-		OR (b."LastName" LIKE CONCAT('%', bWord1, '%') AND b."MiddleName" LIKE CONCAT('%', bWord2, '%'))
-		OR (b."MiddleName" LIKE CONCAT('%', bWord1, '%') AND b."FirstName" LIKE CONCAT('%', bWord2, '%'))
-	ELSIF count(string_to_array(bAuthor, ' ')) = 3
-	THEN
-		DECLARE bWord1 = split_part(bAuthor, ' ', 1); bWord2 = split_part(bAuthor, ' ', 2); bWord3 = split_part(bAuthor, ' ', 3);
-		SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
-		FROM BookPageFilter(bLimit, bOffset) b
-		WHERE (b."FirstName" LIKE CONCAT('%', bWord1, '%') AND b."LastName" LIKE CONCAT('%', bWord2, '%') AND b."MiddleName" LIKE CONCAT('%', bWord3, '%'))
-		OR (b."FirstName" LIKE CONCAT('%', bWord1, '%') AND b."LastName" LIKE CONCAT('%', bWord3, '%') AND b."MiddleName" LIKE CONCAT('%', bWord2, '%'))
-		OR (b."FirstName" LIKE CONCAT('%', bWord2, '%') AND b."LastName" LIKE CONCAT('%', bWord1, '%') AND b."MiddleName" LIKE CONCAT('%', bWord3, '%'))
-		OR (b."FirstName" LIKE CONCAT('%', bWord2, '%') AND b."LastName" LIKE CONCAT('%', bWord3, '%') AND b."MiddleName" LIKE CONCAT('%', bWord1, '%'))
-		OR (b."FirstName" LIKE CONCAT('%', bWord3, '%') AND b."LastName" LIKE CONCAT('%', bWord1, '%') AND b."MiddleName" LIKE CONCAT('%', bWord2, '%'))
-		OR (b."FirstName" LIKE CONCAT('%', bWord3, '%') AND b."LastName" LIKE CONCAT('%', bWord2, '%') AND b."MiddleName" LIKE CONCAT('%', bWord1, '%'))
-	END IF
-ELSIF
-THEN
-
-END IF
-
-DROP FUNCTION IF EXISTS BookFilter(int,int,text,text,text,int);
 CREATE OR REPLACE FUNCTION BookFilter(bLimit int, bOffset int, bName text default 'underfined', bAuthor text default 'underfined', bGenre text default 'underfined', bYear int default -1) RETURNS SETOF "Books" 
+AS
+$$
+begin
+	IF (bName != 'undefined' AND bAuthor = 'undefined' AND bGenre = 'undefined' AND bYear = -1)
+	THEN SELECT * FROM BookNameFilter(bLimit, bOffset, bName);
+	ELSIF (bName = 'undefined' AND bAuthor != 'undefined' AND bGenre = 'undefined' AND bYear = -1)
+	THEN
+		IF count(string_to_array(bAuthor, ' ')) = 1
+		THEN SELECT * FROM BookAuthorOneWordFilter(bLimit, bOffset, split_part(bAuthor, ' ', 1));
+		ELSIF count(string_to_array(bAuthor, ' ')) = 2
+		THEN SELECT * FROM BookAuthorTwoWordsFilter(bLimit, bOffset, split_part(bAuthor, ' ', 1), split_part(bAuthor, ' ', 2));
+		ELSIF count(string_to_array(bAuthor, ' ')) = 3
+		THEN SELECT * FROM BookAuthorThreeWordsFilter(bLimit, bOffset, split_part(bAuthor, ' ', 1), split_part(bAuthor, ' ', 2), split_part(bAuthor, ' ', 3));
+		END IF;
+	ELSIF (bName = 'undefined' AND bAuthor = 'undefined' AND bGenre != 'undefined' AND bYear = -1)
+	THEN SELECT * FROM BookGenreFilter(bLimit, bOffset, bGenre);
+	ELSIF (bName = 'undefined' AND bAuthor = 'undefined' AND bGenre = 'undefined' AND bYear != -1)
+	THEN SELECT * FROM BookYearOfProductionFilter(bLimit, bOffset, bYear);
+	--Выборка по двум полям, по трём полям, по всем полям
+	END IF;
+end;
+
+$$ LANGUAGE plpgsql;
+
+--Функции, переделанные под plpgsql
+DROP FUNCTION IF EXISTS BookPageFilter(integer,integer);
+CREATE OR REPLACE FUNCTION BookPageFilter(bLimit int, bOffset int) RETURNS SETOF public."Books"
 AS $$
 BEGIN
-IF bAuthor = 'undefined' AND bGenre = 'undefined' AND bYear = -1
-THEN
-	SELECT * FROM BookNameFilter(bLimit, bOffset, bName)
-END IF
-END
+RETURN QUERY
+SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut" FROM public."Books" b ORDER BY b."LastModified"
+LIMIT bLimit OFFSET bOffset;
+END;
 $$
-LANGUAGE SQL;
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS BookNameFilter(int,int,text);
+CREATE OR REPLACE FUNCTION BookNameFilter(bLimit int, bOffset int, bName text default 'underfined') RETURNS SETOF public."Books"
+AS $$
+BEGIN
+RETURN QUERY
+SELECT b."Id", b."LastModified", b."Name", b."FirstName", b."LastName", b."MiddleName", b."YearOfProduction", b."ISBN", b."Shortcut"
+FROM BookPageFilter(bLimit, bOffset) b
+WHERE b."Name" LIKE CONCAT('%', bName, '%');
+END;
+$$
+LANGUAGE plpgsql;
