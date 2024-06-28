@@ -89,7 +89,11 @@ namespace WpfTestTask
             lock (string.Empty) _isRefreshingFilterFlag = false;
 
             //Установка фильтров
-            string nameFilter = TextBoxNameFilter.Text;
+            string nameFilter = TextBoxNameFilter.Text != "" ? TextBoxNameFilter.Text : "undefined";
+            string authorFilter = TextBoxAuthorFilter.Text != "" ? TextBoxAuthorFilter.Text : "undefined";
+            string genreFilter = ComboBoxGenresFilter.Text != "" ? ComboBoxGenresFilter.Text : "undefined";
+            int yearOfProductionFilter = -1;
+            if (!int.TryParse(TextBoxYearOfProductionFilter.Text, out yearOfProductionFilter)) ; //Продумать действия при ошибке присваивания
 
             int limit = int.Parse(ComboBoxPageCount.SelectedItem.ToString());
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
@@ -133,7 +137,7 @@ namespace WpfTestTask
             Visibility visibility = !_isInitialized ? Visibility.Visible : Visibility.Hidden;
             RectangleRefresh.Visibility = visibility;
             TextBlockRefresh.Visibility = visibility;
-            TextBoxPage.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = GroupBoxFilters.IsEnabled = _isInitialized;
+            ButtonPagePrev.IsEnabled = TextBoxPage.IsEnabled = ButtonPageNext.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = GroupBoxFilters.IsEnabled = _isInitialized;
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
