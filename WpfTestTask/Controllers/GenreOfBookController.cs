@@ -13,63 +13,83 @@ namespace WpfTestTask.Controllers
     static class GenreOfBookController
     {
         #region Выборка данных
-        public static string SelectGenresOfBookOnRow(Guid bookId)
+        public static List<GenreOfBook> SelectGenresOfBookData(Guid bookId)
         {
-            string command = $"SELECT genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
+            string command = $"SELECT gb.\"Id\", gb.\"LastModified\", gb.\"BookId\", gb.\"GenreId\" FROM public.\"GenresOfBook\" gb JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
             DataTable dataTable = PSqlConnection.SelectData(command);
-            string genresOnRow = string.Empty;
+            List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
             foreach (DataRow row in dataTable.Rows)
             {
-                string genre = row["Genre"].ToString();
-                genresOnRow += (genre + ", ");
+                if (!Guid.TryParse(row["Id"].ToString(), out Guid id)) continue;
+                if (!DateTime.TryParse(row["LastModified"].ToString(), out DateTime lastModified)) continue;
+                if (!Guid.TryParse(row["BookId"].ToString(), out Guid bookDd)) continue;
+                if (!Guid.TryParse(row["GenreId"].ToString(), out Guid genreId)) continue;
+                genresOfBook.Add(new GenreOfBook(id, lastModified, bookDd, genreId));
             }
-            if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
-            return genresOnRow;
+            return genresOfBook;
         }
 
-        public static List<Genre> SelectGenresOfBookData(Guid bookId)
+        public static GenreOfBook SelectGenreOfBookData(Guid bookId, Guid genreId)
         {
-            string command = $"SELECT genre.\"Id\", genre.\"Genre\" FROM public.\"Genres\" genre JOIN public.\"GenresOfBook\" gb ON gb.\"GenreId\" = genre.\"Id\" JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
+            string command = $"SELECT gb.\"Id\", gb.\"LastModified\" FROM public.\"GenresOfBook\" gb JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}' AND gb.\"GenreId\" = '{genreId}' LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
-            List<Genre> genres = new List<Genre>();
+            GenreOfBook genresOfBook = null;
             foreach (DataRow row in dataTable.Rows)
             {
-                Guid id = Guid.Empty;
-                if (!Guid.TryParse(row["id"].ToString(), out id)) continue;
-                string genre = row["Genre"].ToString();
-                genres.Add(new Genre(id, genre));
+                if (!Guid.TryParse(row["Id"].ToString(), out Guid id)) continue;
+                if (!DateTime.TryParse(row["LastModified"].ToString(), out DateTime lastModified)) continue;
+                genresOfBook = new GenreOfBook(id, lastModified, bookId, genreId);
             }
-            return genres;
+            return genresOfBook;
         }
 
-        public static List<Genre> SelectGenresOfBookFromListBox(ItemCollection items)
+        public static List<GenreOfBook> SelectGenresOfBookFromListBox(ItemCollection items)
         {
-            return (from Genre genre in items select genre).ToList();
+            return (from GenreOfBook genreOfBook in items select genreOfBook).ToList();
         }
-        
-        public static string ConvertGenresToGenresOnRow(List<Genre> genres)
+
+        public static string ConvertGenresOfBookToGenresOnRow(List<GenreOfBook> genresOfBook)
         {
             string genresOnRow = string.Empty;
-            foreach (Genre genre in genres)
+            foreach (GenreOfBook genreOfBook in genresOfBook)
+            {
+                Genre genre = GenreController.SelectGenreData(genreOfBook.GenreId);
                 genresOnRow += (genre.Name + ", ");
+            }
             if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
             return genresOnRow;
         }
         #endregion
 
         #region Добавление данных
-        public static void InsertGenresOfBook(Book book)
+        public static void InsertGenresOfBookData(List<GenreOfBook> genresOfBook)
         {
-            foreach (Genre genre in book.Genres)
+            string command = "INSERT INTO public.\"GenresOfBook\"(\"Id\", \"LastModified\", \"BookId\", \"GenreId\") VALUES ";
+            foreach (GenreOfBook genreOfBook in genresOfBook)
             {
-                string command = "INSERT INTO public.\"GenresOfBook\"(\"Id\", \"LastModified\", \"BookId\", \"GenreId\") VALUES (" +
-                    $"'{Guid.NewGuid()}', " +
-                    $"'{book.LastModified}', " +
-                    $"'{book.Id}', " +
-                    $"'{genre.Id}');";
+                command += "(" +
+                    $"'{genreOfBook.Id}', " +
+                    $"'{genreOfBook.LastModified}', " +
+                    $"'{genreOfBook.BookId}', " +
+                    $"'{genreOfBook.GenreId}'), ";
+            }
+            command = command.Remove(command.LastIndexOf(", ")) + ";";
+            PSqlConnection.InsertData(command);
+        }
+        #endregion
+
+        public static void UpdateGenresOfBookData(List<GenreOfBook> genresOfBook)
+        {
+            //ДЕЛАТЬ АПДЕЙТ ТОЛЬКО У ТЕХ, КТО СУЩЕСТВУЕТ
+            foreach (GenreOfBook genreOfBook in genresOfBook)
+            {
+                string command = "UPDATE public.\"GenresOfBook\" genreOfBook SET" +
+                    $"genreOfBook.LastModified = '{genreOfBook.LastModified}', " +
+                    $"genreOfBook.BookId = '{genreOfBook.BookId}', " +
+                    $"genreOfBook.GenreId = '{genreOfBook.GenreId}') " +
+                    $"WHERE genreOfBook.\"Id\" = '{genreOfBook.Id}'";
                 PSqlConnection.InsertData(command);
             }
         }
-        #endregion
     }
 }

@@ -5,25 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask"
         mc:Ignorable="d"
-        Title="Книги" Height="528" Width="965" ResizeMode="NoResize">
+        Title="Книги" Height="500" Width="1000" ResizeMode="NoResize">
     <Grid>
-        <DataGrid x:Name="DataGridBooks" Margin="143,10,10,0" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged" Height="387" VerticalAlignment="Top">
+        <DataGrid x:Name="DataGridBooks" Margin="143,10,10,0" SelectionMode="Single" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged" Height="387" VerticalAlignment="Top" MouseDoubleClick="DataGridBooks_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="ID" />
-                <DataGridTextColumn Binding="{Binding LastModified}" IsReadOnly="true" Header="Последнее изменение" />
-                <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="true" Header="Название" />
-                <DataGridTextColumn Binding="{Binding LastName}" IsReadOnly="true" Header="Фамилия" />
-                <DataGridTextColumn Binding="{Binding FirstName}" IsReadOnly="true" Header="Имя" />
-                <DataGridTextColumn Binding="{Binding MiddleName}" IsReadOnly="true" Header="Отчество" />
-                <DataGridTextColumn Binding="{Binding YearOfProduction}" IsReadOnly="true" Header="Год выпуска" />
-                <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" />
+                <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="Id" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="200" />
+                <DataGridTextColumn Binding="{Binding LastModified}" IsReadOnly="true" Header="Последнее изменение" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="150"/>
+                <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="true" Header="Название" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
+                <DataGridTextColumn Binding="{Binding LastName}" IsReadOnly="true" Header="Фамилия" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
+                <DataGridTextColumn Binding="{Binding FirstName}" IsReadOnly="true" Header="Имя" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
+                <DataGridTextColumn Binding="{Binding MiddleName}" IsReadOnly="true" Header="Отчество" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
+                <DataGridTextColumn Binding="{Binding YearOfProduction}" IsReadOnly="true" Header="Год выпуска" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="50"/>
+                <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
         <Border x:Name="BorderImage" BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Loaded="BorderImage_Loaded">
             <Image x:Name="ImageCover" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
         <TextBlock x:Name="TextBlockImageNotFound" HorizontalAlignment="Left" Margin="10,57,0,0" TextWrapping="Wrap" Text="Изображение не найдено" VerticalAlignment="Top" Height="34" Width="128" TextAlignment="Center" Loaded="TextBlockImageNotFound_Loaded"/>
-        <Label x:Name="LabelShortcut" Content="Краткое содержание" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="128" Height="26"/>
+        <Label x:Name="LabelShortcut" Content="Краткое содержание" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top" Width="128" Height="26" Loaded="LabelShortcut_Loaded"/>
         <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,174,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="83" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
         <Label x:Name="LabelISBN" Content="ISBN" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="10,262,0,0" VerticalAlignment="Top" Width="128" Loaded="LabelISBN_Loaded"/>
         <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="10,293,0,0" TextWrapping="Wrap" Text="ISBN" VerticalAlignment="Top" Width="128" Loaded="TextBoxISBN_Loaded"/>
@@ -49,14 +49,14 @@
                     <TextBlock VerticalAlignment="Top" Margin="183,4,0,0" HorizontalAlignment="Left" Width="45">Автор:</TextBlock>
                     <TextBox x:Name="TextBoxAuthorFilter" VerticalAlignment="Top" Height="20" Width="125" Margin="183,25,0,0" HorizontalAlignment="Left" TextChanged="TextBoxAuthorFilter_TextChanged"/>
                     <TextBlock VerticalAlignment="Top" Margin="313,4,0,0" HorizontalAlignment="Left" Width="62">Жанр:</TextBlock>
-                    <ComboBox x:Name="ComboBoxGenresFilter" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="20" Width="150" Margin="313,25,0,0" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" SelectionChanged="ComboBoxGenresFilter_SelectionChanged"/>
+                    <ComboBox x:Name="ComboBoxGenresFilter" VerticalAlignment="Top" VerticalContentAlignment="Center" Height="20" Width="150" Margin="313,25,0,0" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" SelectionChanged="ComboBoxGenresFilter_SelectionChanged" Loaded="ComboBoxGenresFilter_Loaded"/>
                     <TextBlock VerticalAlignment="Top" Margin="468,4,0,0" HorizontalAlignment="Left" Width="77">Год выпуска:</TextBlock>
                     <TextBox x:Name="TextBoxYearOfProductionFilter" VerticalAlignment="Top" Height="20" Margin="468,25,0,0" HorizontalAlignment="Left" Width="77" TextChanged="TextBoxYearOfProductionFilter_TextChanged"/>
                     <Button x:Name="ButtonClearFilters" Content="Сбросить" Margin="550,25,0,5" Width="100" Height="20" Click="ButtonClearFilters_Click" HorizontalAlignment="Left"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <Rectangle x:Name="RectangleRefresh" Height="387" Margin="143,10,10,0" Stroke="Black" VerticalAlignment="Top" Fill="#FF1D9E25" Loaded="RectangleRefresh_Loaded"/>
+        <Rectangle x:Name="RectangleRefresh" Visibility="Hidden" Height="387" Margin="143,10,10,0" Stroke="Black" VerticalAlignment="Top" Fill="#FF1D9E25" Loaded="RectangleRefresh_Loaded"/>
         <TextBlock x:Name="TextBlockRefresh" HorizontalAlignment="Left" Margin="143,174,0,0" TextAlignment="Center" TextWrapping="Wrap" Text="Обновление" VerticalAlignment="Top" Height="59" Width="812" FontSize="48" FontFamily="Impact" Loaded="TextBlockRefresh_Loaded"/>
     </Grid>
 </Window>

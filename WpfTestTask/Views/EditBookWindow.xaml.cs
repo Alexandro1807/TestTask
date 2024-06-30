@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -18,35 +20,46 @@ using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 
-namespace WpfTestTask
+namespace WpfTestTask.Views
 {
     /// <summary>
-    /// Логика взаимодействия для AddBookWindow.xaml
+    /// Логика взаимодействия для EditBookWindow.xaml
     /// </summary>
-    public partial class AddBookWindow : Window
+    public partial class EditBookWindow : Window
     {
         byte[] _cover = null;
-        public AddBookWindow()
+        public EditBookWindow(Book book)
         {
             InitializeComponent();
-            InitializeFormToEndState();
+            InitializeFormToEndState(book);
         }
 
-        private void InitializeFormToEndState()
+        private void InitializeFormToEndState(Book book)
         {
+            TextBoxId.Text = book.Id.ToString();
+            TextBoxName.Text = book.Name;
+            TextBoxLastName.Text = book.LastName;
+            TextBoxFirstName.Text = book.FirstName;
+            TextBoxMiddleName.Text = book.MiddleName;
+            TextBoxISBN.Text = book.ISBN;
+            TextBoxShortcut.Text = book.Shortcut;
+            SliderYearOfProduction.Value = book.YearOfProduction;
+            LabelCoverName.Content += book.CoverText;
+            ListBoxGenres.ItemsSource = GenreController.SelectGenresFromGenresOfBookData(book.Id);
+
             List<Genre> genres = GenreController.SelectGenresData(false);
             ComboBoxGenresAdd.ItemsSource = genres;
             ComboBoxGenresRemove.ItemsSource = genres;
         }
 
-        private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
+        private void ButtonEditCover_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new() { AddExtension = true, DefaultExt = ".png", Filter = "PNG (.png)|*.png|JPG (.jpg)|*.jpg|JPEG (.jpeg)|*.jpeg" };
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
                 //ПОПЫТКИ СОХРАНИТЬ ИЗОБРАЖЕНИЕ В ВИДЕ БАЙТОВОГО МАССИВА
-                
+
                 //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
                 //encoder.Frames.Add(BitmapFrame.Create(new BitmapImage(new Uri(dialog.FileName))));
                 //using (MemoryStream MS = new MemoryStream())
@@ -64,15 +77,16 @@ namespace WpfTestTask
 
                 _cover = File.ReadAllBytes(dialog.FileName);
                 LabelCoverName.Content = "Путь: " + dialog.FileName;
+                LabelCoverName.Visibility = Visibility.Visible;
             }
         }
 
-        private void ButtonAddBook_Click(object sender, RoutedEventArgs e)
+        private void ButtonEditBook_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 TextBoxError.Visibility = Visibility.Hidden;
-                Guid id = Guid.NewGuid();
+                if (!Guid.TryParse(TextBoxId.Text, out Guid id)) return;
                 DateTime lastModified = DateTime.Now;
                 if (!int.TryParse(TextBoxYearOfProduction.Text, out int yearOfProduction)) yearOfProduction = DateTime.Now.Year;
                 string name, firstName, lastName, middleName, isbn, shortcut, genresOnRow, coverText;
@@ -85,12 +99,26 @@ namespace WpfTestTask
                 List<Genre> genres = GenreController.SelectGenresFromListBox(ListBoxGenres.Items);
                 List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
                 foreach (Genre genre in genres)
-                    genresOfBook.Add(new GenreOfBook(Guid.NewGuid(), lastModified, id, genre.Id));
+                {
+                    GenreOfBook genreOfBook = GenreOfBookController.SelectGenreOfBookData(id, genre.Id);
+                    if (genreOfBook == null)
+                        genreOfBook = new GenreOfBook(Guid.NewGuid(), lastModified, id, genre.Id);
+                    genresOfBook.Add(genreOfBook);
+                }
                 genresOnRow = GenreOfBookController.ConvertGenresOfBookToGenresOnRow(genresOfBook);
                 coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genresOfBook, genresOnRow, coverText, _cover);
-                BookController.InsertDataBooks(book);
-                GenreOfBookController.InsertGenresOfBookData(genresOfBook);
+                BookController.UpdateDataBooks(book);
+
+                foreach (GenreOfBook genreOfBook in genresOfBook)
+                {
+
+                    //if (!Guid.TryParse(TextBoxId.Text, out Guid bookId)) return;
+                    //
+
+                    //Пройтись по genresOfBook и выбрать, INSERT, UPDATE OR DELETE
+                    //GenreOfBookController.UpdateGenresOfBookData(genresOfBook);
+                }
                 //CoverController.InsertCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
                 CoverController.InsertCoversWithoutImage(book);
             }
@@ -98,7 +126,7 @@ namespace WpfTestTask
             {
                 SetTextBoxErrorContent(ex.Message);
             }
-            
+
         }
 
         /// <summary>
@@ -188,11 +216,6 @@ namespace WpfTestTask
             textBox.Visibility = Visibility.Collapsed;
         }
 
-        private void LabelCoverName_Loaded(object sender, RoutedEventArgs e)
-        {
-            LabelCoverName.Content = string.Empty;
-        }
-
         private void TextBoxError_Loaded(object sender, RoutedEventArgs e)
         {
             TextBoxError.Text = string.Empty;
@@ -213,30 +236,32 @@ namespace WpfTestTask
 
         private void UpdateListBoxGenres(Genre genre, bool isAdd)
         {
+            List<Genre> genres = GenreController.SelectGenresFromListBox(ListBoxGenres.Items);
             switch (isAdd)
             {
                 case true:
                     {
                         ComboBoxGenresAdd.SelectedItem = null;
-                        if (ListBoxGenres.Items.IndexOf(genre) == -1)
-                            ListBoxGenres.Items.Add(genre);
+                        if (!genres.Any(g => g.Id == genre.Id))
+                            genres.Add(genre);
                         break;
                     }
                 case false:
                     {
                         ComboBoxGenresRemove.SelectedItem = null;
-                        if (ListBoxGenres.Items.IndexOf(genre) != -1)
-                            ListBoxGenres.Items.Remove(genre);
+                        if (genres.Any(g => g.Id == genre.Id))
+                            genres.Remove(genres.First(g => g.Id == genre.Id));
                         break;
                     }
             }
+            ListBoxGenres.ItemsSource = genres;
         }
 
         private void CheckBoxGenreUndefined_Click(object sender, RoutedEventArgs e)
         {
             if ((bool)CheckBoxGenreUndefined.IsChecked)
             {
-                ListBoxGenres.Items.Clear();
+                ListBoxGenres.ItemsSource = new List<Genre>();
                 ListBoxGenres.IsEnabled = false;
                 ListBoxGenres.Visibility = Visibility.Hidden;
                 LabelGenreAdd.Visibility = Visibility.Hidden;
@@ -248,6 +273,8 @@ namespace WpfTestTask
             }
             else
             {
+                if (Guid.TryParse(TextBoxId.Text, out Guid bookId))
+                    ListBoxGenres.ItemsSource = GenreController.SelectGenresFromGenresOfBookData(bookId);
                 ListBoxGenres.IsEnabled = true;
                 ListBoxGenres.Visibility = Visibility.Visible;
                 LabelGenreAdd.Visibility = Visibility.Visible;

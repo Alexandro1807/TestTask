@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfTestTask.Models
 {
-    class Genre
+    public class Genre
     {
         public Guid Id { get; set; } = Guid.Empty;
         public string Name { get; set; }

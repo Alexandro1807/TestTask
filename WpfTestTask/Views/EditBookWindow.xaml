@@ -1,26 +1,26 @@
-﻿<Window x:Class="WpfTestTask.AddBookWindow"
+﻿<Window x:Class="WpfTestTask.Views.EditBookWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfTestTask"
+        xmlns:local="clr-namespace:WpfTestTask.Views"
         mc:Ignorable="d"
-        Title="Добавление книги" Height="500" Width="1000" ResizeMode="NoResize">
+        Title="Изменение книги" Height="500" Width="1000" ResizeMode="NoResize">
     <Grid>
         <TextBox x:Name="TextBoxName" HorizontalAlignment="Left" Margin="161,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Название книги"/>
         <TextBox x:Name="TextBoxLastName" HorizontalAlignment="Left" Margin="161,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Фамилия автора"/>
         <TextBox x:Name="TextBoxFirstName" HorizontalAlignment="Left" Margin="161,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Имя автора"/>
         <TextBox x:Name="TextBoxMiddleName" HorizontalAlignment="Left" Margin="161,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Отчество автора"/>
         <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="161,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="ISBN книги"/>
-        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="150" ToolTip="Краткое содержание" AcceptsReturn="True"/>
-        <TextBox x:Name="TextBoxError" Text="Строка состояния, в которой возникает сообщение об ошибке при ошибке добавления, которое через 10 секунд асинхронно исчезает." HorizontalAlignment="Left" Margin="10,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="887" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="20" BorderBrush="Black" SelectionBrush="{x:Null}" Loaded="TextBoxError_Loaded" Background="White" SelectionTextBrush="{x:Null}" SelectionOpacity="0"/>
+        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="127" ToolTip="Краткое содержание" AcceptsReturn="True"/>
+        <TextBox x:Name="TextBoxError" Text="Строка состояния, в которой возникает сообщение об ошибке при ошибке изменения, которое через 10 секунд асинхронно исчезает." HorizontalAlignment="Left" Margin="10,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="887" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="20" BorderBrush="Black" SelectionBrush="{x:Null}" Loaded="TextBoxError_Loaded" Background="White" SelectionTextBrush="{x:Null}" SelectionOpacity="0"/>
         <Label Content="Название книги" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
         <Label Content="Отчество автора" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <Label Content="ISBN книги" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <Label Content="Краткое содержание" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="ButtonAddBook" Content="Добавить книгу" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top" Click="ButtonAddBook_Click" Width="146"/>
+        <Button x:Name="ButtonEditBook" Content="Изменить книгу" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top" Click="ButtonEditBook_Click" Width="146"/>
         <Border BorderBrush="Black" BorderThickness="1" Margin="466,16,0,0" Height="304" VerticalAlignment="Top" HorizontalAlignment="Left" Width="431">
             <Grid>
                 <TextBox x:Name="TextBoxYearOfProduction" HorizontalAlignment="Left" Margin="209,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="22"/>
@@ -30,14 +30,14 @@
                 <Button x:Name="ButtonMinusOneToYearOfProduction" Content="-1" HorizontalAlignment="Left" Margin="172,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneToYearOfProduction_Click"/>
                 <Button x:Name="ButtonMinusTenToYearOfProduction" Content="-10" HorizontalAlignment="Left" Margin="137,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusTenToYearOfProduction_Click"/>
                 <Button x:Name="ButtonMinusOneHundredToYearOfProduction" Content="-100" HorizontalAlignment="Left" Margin="102,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonMinusOneHundredToYearOfProduction_Click"/>
-                <Button x:Name="ButtonAddCover" Content="Добавить обложку" HorizontalAlignment="Left" Margin="10,272,0,0" VerticalAlignment="Top" Width="146" Click="ButtonAddCover_Click"/>
+                <Button x:Name="ButtonEditCover" Content="Изменить обложку" HorizontalAlignment="Left" Margin="10,272,0,0" VerticalAlignment="Top" Width="120" Click="ButtonEditCover_Click"/>
                 <Slider x:Name="SliderYearOfProduction" HorizontalAlignment="Left" Margin="102,41,0,0" VerticalAlignment="Top" Width="300" Maximum="3000" IsSelectionRangeEnabled="True" ToolTip="Год выпуска" Delay="100" SmallChange="1" Value="2024" ValueChanged="SliderYearOfProduction_ValueChanged" IsSnapToTickEnabled="True"/>
                 <Label Content="Год выпуска" HorizontalAlignment="Left" Margin="10,12,0,0" VerticalAlignment="Top"/>
                 <Label Content="Жанры" HorizontalAlignment="Left" Margin="82,65,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="LabelGenreAdd" Content="Добавить жанр" HorizontalAlignment="Left" Margin="209,65,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="LabelGenreRemove" Content="Удалить жанр" HorizontalAlignment="Left" Margin="209,140,0,0" VerticalAlignment="Top"/>
                 <Label Content="Обложка книги" HorizontalAlignment="Center" Margin="0,212,0,0" VerticalAlignment="Top"/>
-                <Label x:Name="LabelCoverName" Content="Путь: " HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,241,0,0" Loaded="LabelCoverName_Loaded" Width="409"/>
+                <Label x:Name="LabelCoverName" Content="Путь: " HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,241,0,0" Width="407"/>
                 <ListBox x:Name="ListBoxGenres" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" HorizontalAlignment="Left" Width="194" Margin="10,93,0,0" Height="100" VerticalAlignment="Top"/>
                 <ComboBox x:Name="ComboBoxGenresAdd" HorizontalAlignment="Left" Margin="209,93,0,0" VerticalAlignment="Top" Width="193" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresAdd_SelectionChanged"/>
                 <ComboBox x:Name="ComboBoxGenresRemove" HorizontalAlignment="Left" Margin="209,171,0,0" VerticalAlignment="Top" Width="194" ItemsSource="{Binding Genre}" SelectedValue="{Binding Id, Mode=TwoWay}" SelectedValuePath="Id" DisplayMemberPath="Name" SelectionChanged="ComboBoxGenresRemove_SelectionChanged"/>
@@ -46,5 +46,7 @@
                 <Border BorderBrush="Black" BorderThickness="1" Height="2" Margin="0,110,0,0"/>
             </Grid>
         </Border>
+        <TextBox x:Name="TextBoxId" IsEnabled="false" HorizontalAlignment="Left" Margin="221,302,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="240"/>
+        <Label Content="Id книги" HorizontalAlignment="Left" Margin="161,297,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
