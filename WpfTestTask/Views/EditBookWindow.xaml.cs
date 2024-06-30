@@ -102,25 +102,35 @@ namespace WpfTestTask.Views
                 {
                     GenreOfBook genreOfBook = GenreOfBookController.SelectGenreOfBookData(id, genre.Id);
                     if (genreOfBook == null)
-                        genreOfBook = new GenreOfBook(Guid.NewGuid(), lastModified, id, genre.Id);
+                        genreOfBook = new GenreOfBook(Guid.Empty, lastModified, id, genre.Id);
                     genresOfBook.Add(genreOfBook);
                 }
                 genresOnRow = GenreOfBookController.ConvertGenresOfBookToGenresOnRow(genresOfBook);
                 coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genresOfBook, genresOnRow, coverText, _cover);
                 BookController.UpdateDataBooks(book);
-
+                //Запихнуть весь следующий код в
+                //GenreOfBookController.UpdateGenresOfBookData(genresOfBook);
+                List<GenreOfBook> genresOfBookOriginal = GenreOfBookController.SelectGenresOfBookData(book.Id);
                 foreach (GenreOfBook genreOfBook in genresOfBook)
                 {
-
-                    //if (!Guid.TryParse(TextBoxId.Text, out Guid bookId)) return;
-                    //
-
-                    //Пройтись по genresOfBook и выбрать, INSERT, UPDATE OR DELETE
-                    //GenreOfBookController.UpdateGenresOfBookData(genresOfBook);
+                    if (genreOfBook.Id == Guid.Empty)
+                        genreOfBook.Id = Guid.NewGuid();
+                    else
+                    {
+                        GenreOfBookController.UpdateGenreOfBookData(genreOfBook);
+                        genresOfBook.Remove(genreOfBook);
+                        genresOfBookOriginal.Remove(genreOfBook);
+                    }
                 }
-                //CoverController.InsertCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
-                CoverController.InsertCoversWithoutImage(book);
+                genresOfBookOriginal.RemoveRange(genresOfBook);
+                GenreOfBookController.DeleteGenresOfBookData(genresOfBookOriginal);
+                GenreOfBookController.InsertGenresOfBookData(genresOfBook);
+                
+                
+                
+                //CoverController.UpdateCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
+                CoverController.UpdateCoversWithoutImage(book);
             }
             catch (Exception ex)
             {
