@@ -80,7 +80,7 @@ namespace WpfTestTask.Database
             }
         }
 
-        public static bool InsertData(string command) //Сохранение данных
+        public static bool ExecuteData(string command) //Вызов команды (добавление, изменение, удаление данных)
         {
             try
             {

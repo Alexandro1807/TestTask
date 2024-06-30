@@ -15,7 +15,7 @@ namespace WpfTestTask.Controllers
     static class GenreController
     {
         #region Выборка данных
-        public static List<Genre> SelectGenresData(bool isWithUndefined)
+        public static List<Genre> SelectDataGenres(bool isWithUndefined)
         {
             string withUndefined = isWithUndefined ? $"WHERE genres.\"Id\" != '{Guid.Empty}'" : "";
             string command = $"SELECT genres.\"Id\", genres.\"Name\" FROM public.\"Genres\" genres {withUndefined} ORDER BY genres.\"Id\"";
@@ -26,25 +26,28 @@ namespace WpfTestTask.Controllers
             return genres;
         }
 
-        public static List<Genre> SelectGenresFromGenresOfBookData(Guid bookId)
+        public static List<Genre> SelectDataGenresFromGenresOfBook(Guid bookId)
         {
-            string command = $"SELECT genre.\"Id\", genre.\"Name\" FROM public.\"Genres\" genre WHERE genre.\"Id\" IN (";
-            List<GenreOfBook> genresOfBook = GenreOfBookController.SelectGenresOfBookData(bookId);
-            foreach (GenreOfBook genreOfBook in genresOfBook)
-                command += $"'{genreOfBook.GenreId}', ";
-            command = command.Remove(command.LastIndexOf(", ")) + ");";
-            DataTable dataTable = PSqlConnection.SelectData(command);
             List<Genre> genres = new List<Genre>();
-            foreach (DataRow row in dataTable.Rows)
+            List<GenreOfBook> genresOfBook = GenreOfBookController.SelectDataGenresOfBook(bookId);
+            if (genresOfBook.Count != 0)
             {
-                if (!Guid.TryParse(row["Id"].ToString(), out Guid id)) continue;
-                string name = row["Name"].ToString();
-                genres.Add(new Genre(id, name));
+                string command = $"SELECT genre.\"Id\", genre.\"Name\" FROM public.\"Genres\" genre WHERE genre.\"Id\" IN (";
+                foreach (GenreOfBook genreOfBook in genresOfBook)
+                    command += $"'{genreOfBook.GenreId}', ";
+                command = command.Remove(command.LastIndexOf(", ")) + ");";
+                DataTable dataTable = PSqlConnection.SelectData(command);
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    if (!Guid.TryParse(row["Id"].ToString(), out Guid id)) continue;
+                    string name = row["Name"].ToString();
+                    genres.Add(new Genre(id, name));
+                }
             }
             return genres;
         }
 
-        public static Genre SelectGenreData(Guid genreId)
+        public static Genre SelectDataGenre(Guid genreId)
         {
             string command = $"SELECT genre.\"Id\", genre.\"Name\" FROM public.\"Genres\" genre WHERE genre.\"Id\" = '{genreId}' LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);

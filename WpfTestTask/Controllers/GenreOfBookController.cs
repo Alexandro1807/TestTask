@@ -13,7 +13,7 @@ namespace WpfTestTask.Controllers
     static class GenreOfBookController
     {
         #region Выборка данных
-        public static List<GenreOfBook> SelectGenresOfBookData(Guid bookId)
+        public static List<GenreOfBook> SelectDataGenresOfBook(Guid bookId)
         {
             string command = $"SELECT gb.\"Id\", gb.\"LastModified\", gb.\"BookId\", gb.\"GenreId\" FROM public.\"GenresOfBook\" gb JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}'";
             DataTable dataTable = PSqlConnection.SelectData(command);
@@ -29,7 +29,7 @@ namespace WpfTestTask.Controllers
             return genresOfBook;
         }
 
-        public static GenreOfBook SelectGenreOfBookData(Guid bookId, Guid genreId)
+        public static GenreOfBook SelectDataGenreOfBook(Guid bookId, Guid genreId)
         {
             string command = $"SELECT gb.\"Id\", gb.\"LastModified\" FROM public.\"GenresOfBook\" gb JOIN public.\"Books\" book ON gb.\"BookId\" = book.\"Id\" WHERE gb.\"BookId\" = '{bookId}' AND gb.\"GenreId\" = '{genreId}' LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
@@ -53,7 +53,7 @@ namespace WpfTestTask.Controllers
             string genresOnRow = string.Empty;
             foreach (GenreOfBook genreOfBook in genresOfBook)
             {
-                Genre genre = GenreController.SelectGenreData(genreOfBook.GenreId);
+                Genre genre = GenreController.SelectDataGenre(genreOfBook.GenreId);
                 genresOnRow += (genre.Name + ", ");
             }
             if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
@@ -62,7 +62,7 @@ namespace WpfTestTask.Controllers
         #endregion
 
         #region Добавление данных
-        public static void InsertGenresOfBookData(List<GenreOfBook> genresOfBook)
+        public static void InsertDataGenresOfBook(List<GenreOfBook> genresOfBook)
         {
             string command = "INSERT INTO public.\"GenresOfBook\"(\"Id\", \"LastModified\", \"BookId\", \"GenreId\") VALUES ";
             foreach (GenreOfBook genreOfBook in genresOfBook)
@@ -74,13 +74,12 @@ namespace WpfTestTask.Controllers
                     $"'{genreOfBook.GenreId}'), ";
             }
             command = command.Remove(command.LastIndexOf(", ")) + ";";
-            PSqlConnection.InsertData(command);
+            PSqlConnection.ExecuteData(command);
         }
         #endregion
 
-        public static void UpdateGenresOfBookData(List<GenreOfBook> genresOfBook)
+        public static void UpdateDataGenresOfBook(List<GenreOfBook> genresOfBook)
         {
-            //ДЕЛАТЬ АПДЕЙТ ТОЛЬКО У ТЕХ, КТО СУЩЕСТВУЕТ
             foreach (GenreOfBook genreOfBook in genresOfBook)
             {
                 string command = "UPDATE public.\"GenresOfBook\" genreOfBook SET" +
@@ -88,8 +87,25 @@ namespace WpfTestTask.Controllers
                     $"genreOfBook.BookId = '{genreOfBook.BookId}', " +
                     $"genreOfBook.GenreId = '{genreOfBook.GenreId}') " +
                     $"WHERE genreOfBook.\"Id\" = '{genreOfBook.Id}'";
-                PSqlConnection.InsertData(command);
+                PSqlConnection.ExecuteData(command);
             }
+        }
+
+        public static void DeleteDataGenresOfBook(List<GenreOfBook> genresOfBook)
+        {
+            string command = "DELETE FROM public.\"GenresOfBook\" genreOfBook WHERE genreOfBook.\"Id\" IN (";
+            foreach (GenreOfBook genreOfBook in genresOfBook)
+            {
+                command += $"'{genreOfBook.Id}', ";
+            }
+            command = command.Remove(command.LastIndexOf(", ")) + ");";
+            PSqlConnection.ExecuteData(command);
+        }
+
+        public static void DeleteDataGenresOfBook(Guid bookId)
+        {
+            string command = $"DELETE FROM public.\"GenresOfBook\" genreOfBook WHERE genreOfBook.\"BookId\" = '{bookId}'";
+            PSqlConnection.ExecuteData(command);
         }
     }
 }

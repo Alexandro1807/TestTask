@@ -12,7 +12,7 @@ namespace WpfTestTask.Controllers
     static class CoverController
     {
         #region Выборка данных
-        public static string SelectCoverTextData(Guid id)
+        public static string SelectDataCoverText(Guid id)
         {
             string command = $"SELECT cover.\"CoverText\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{id}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
@@ -22,7 +22,7 @@ namespace WpfTestTask.Controllers
             return coverText;
         }
 
-        public static byte[] SelectCoverData(Guid id)
+        public static byte[] SelectDataCover(Guid id)
         {
             string command = $"SELECT cover.\"Cover\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{id}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
@@ -34,7 +34,7 @@ namespace WpfTestTask.Controllers
         #endregion
 
         #region Добавление данных
-        public static void InsertCovers(Book book)
+        public static void InsertDataCover(Book book)
         {
             string command = "INSERT INTO public.\"Covers\"(\"Id\", \"LastModified\", \"BookId\", \"Cover\", \"CoverText\") VALUES (" +
                 $"'{Guid.NewGuid()}', " +
@@ -42,10 +42,10 @@ namespace WpfTestTask.Controllers
                 $"'{book.Id}', " +
                 $"'{book.Cover}', " +
                 $"'{book.CoverText}');";
-            PSqlConnection.InsertData(command);
+            PSqlConnection.ExecuteData(command);
         }
 
-        public static void InsertCoversWithoutImage(Book book)
+        public static void InsertDataCoverWithoutImage(Book book)
         {
             string command = "INSERT INTO public.\"Covers\"(\"Id\", \"LastModified\", \"BookId\", \"Cover\", \"CoverText\") VALUES (" +
                 $"'{Guid.NewGuid()}', " +
@@ -53,8 +53,18 @@ namespace WpfTestTask.Controllers
                 $"'{book.Id}', " +
                 $"null, " +
                 $"'{book.CoverText}');";
-            PSqlConnection.InsertData(command);
+            PSqlConnection.ExecuteData(command);
         }
         #endregion
+        #region Модификация данных
+        #endregion
+        #region Удаление данных
+        #endregion
+
+        public static void DeleteDataCoverWithoutImage(Guid bookId)
+        {
+            string command = $"DELETE FROM public.\"Covers\" WHERE \"BookId\" = '{bookId}';";
+            PSqlConnection.ExecuteData(command);
+        }
     }
 }

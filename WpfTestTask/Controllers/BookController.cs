@@ -13,7 +13,7 @@ namespace WpfTestTask.Controllers
     static class BookController
     {
         #region Выборка данных
-        public static BindingList<Book> SelectBooksData(string nameFilter, string authorFilter, string genreFilter, int yearOfProductionFilter, int limit, int offset, out int rowFilterCount) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
+        public static BindingList<Book> SelectDataBooks(string nameFilter, string authorFilter, string genreFilter, int yearOfProductionFilter, int limit, int offset, out int rowFilterCount) //Получение данных таблиц Books, GenresOfbook, Covers через функцию
         {
             //в будущем изменить функцию на BookFilter здесь и в базе данных
             string command = $"SELECT * FROM BookFilterFinish('{nameFilter}', '{authorFilter}', '{genreFilter}', {yearOfProductionFilter}, {limit}, {offset});";
@@ -32,11 +32,11 @@ namespace WpfTestTask.Controllers
                 isbn = row["ISBN"].ToString();
                 shortcut = row["Shortcut"].ToString();
 
-                List<GenreOfBook> genresOfBook = GenreOfBookController.SelectGenresOfBookData(id);
+                List<GenreOfBook> genresOfBook = GenreOfBookController.SelectDataGenresOfBook(id);
                 string genresOnRow = GenreOfBookController.ConvertGenresOfBookToGenresOnRow(genresOfBook);
 
-                string coverText = CoverController.SelectCoverTextData(id);
-                byte[] cover = CoverController.SelectCoverData(id);
+                string coverText = CoverController.SelectDataCoverText(id);
+                byte[] cover = CoverController.SelectDataCover(id);
 
                 books.Add(new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genresOfBook, genresOnRow, coverText, cover));
             }
@@ -56,7 +56,7 @@ namespace WpfTestTask.Controllers
         #endregion
 
         #region Добавление данных
-        public static void InsertDataBooks(Book book) //Сохранение данных в таблицу Books
+        public static void InsertDataBook(Book book) //Сохранение данных в таблицу Books
         {
             string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES (" +
                 $"'{book.Id}', " +
@@ -68,7 +68,7 @@ namespace WpfTestTask.Controllers
                 $"'{book.YearOfProduction}', " +
                 $"'{book.ISBN}', " +
                 $"'{book.Shortcut}');";
-            PSqlConnection.InsertData(command);       
+            PSqlConnection.ExecuteData(command);       
         }
         #endregion
         #region Модификация данных
@@ -87,7 +87,13 @@ namespace WpfTestTask.Controllers
                 $"b.\"ISBN\" = '{book.ISBN}', " +
                 $"b.\"Shortcut\" = '{book.Shortcut}' " +
                 $"WHERE b.\"Id\" = '{book.Id}'";
-            PSqlConnection.InsertData(command);
+            PSqlConnection.ExecuteData(command);
+        }
+
+        public static void DeleteDataBook(Guid id)
+        {
+            string command = $"DELETE FROM public.\"Books\" WHERE \"Id\" = '{id}';";
+            PSqlConnection.ExecuteData(command);
         }
     }
 }

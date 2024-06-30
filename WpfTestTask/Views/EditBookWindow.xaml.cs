@@ -45,9 +45,9 @@ namespace WpfTestTask.Views
             TextBoxShortcut.Text = book.Shortcut;
             SliderYearOfProduction.Value = book.YearOfProduction;
             LabelCoverName.Content += book.CoverText;
-            ListBoxGenres.ItemsSource = GenreController.SelectGenresFromGenresOfBookData(book.Id);
+            ListBoxGenres.ItemsSource = GenreController.SelectDataGenresFromGenresOfBook(book.Id);
 
-            List<Genre> genres = GenreController.SelectGenresData(false);
+            List<Genre> genres = GenreController.SelectDataGenres(false);
             ComboBoxGenresAdd.ItemsSource = genres;
             ComboBoxGenresRemove.ItemsSource = genres;
         }
@@ -100,7 +100,7 @@ namespace WpfTestTask.Views
                 List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
                 foreach (Genre genre in genres)
                 {
-                    GenreOfBook genreOfBook = GenreOfBookController.SelectGenreOfBookData(id, genre.Id);
+                    GenreOfBook genreOfBook = GenreOfBookController.SelectDataGenreOfBook(id, genre.Id);
                     if (genreOfBook == null)
                         genreOfBook = new GenreOfBook(Guid.Empty, lastModified, id, genre.Id);
                     genresOfBook.Add(genreOfBook);
@@ -109,34 +109,36 @@ namespace WpfTestTask.Views
                 coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genresOfBook, genresOnRow, coverText, _cover);
                 BookController.UpdateDataBooks(book);
-                //Запихнуть весь следующий код в
-                //GenreOfBookController.UpdateGenresOfBookData(genresOfBook);
-                List<GenreOfBook> genresOfBookOriginal = GenreOfBookController.SelectGenresOfBookData(book.Id);
-                foreach (GenreOfBook genreOfBook in genresOfBook)
-                {
-                    if (genreOfBook.Id == Guid.Empty)
-                        genreOfBook.Id = Guid.NewGuid();
-                    else
-                    {
-                        GenreOfBookController.UpdateGenreOfBookData(genreOfBook);
-                        genresOfBook.Remove(genreOfBook);
-                        genresOfBookOriginal.Remove(genreOfBook);
-                    }
-                }
-                genresOfBookOriginal.RemoveRange(genresOfBook);
-                GenreOfBookController.DeleteGenresOfBookData(genresOfBookOriginal);
-                GenreOfBookController.InsertGenresOfBookData(genresOfBook);
-                
-                
-                
-                //CoverController.UpdateCovers(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
-                CoverController.UpdateCoversWithoutImage(book);
+                GetGenresOfBookToUpdate(genresOfBook, id);
+                //CoverController.InsertDataCover(book); //Научиться сохранять байты в PostgreSQL, затем раскомментировать
+                CoverController.InsertDataCoverWithoutImage(book);
             }
             catch (Exception ex)
             {
                 SetTextBoxErrorContent(ex.Message);
             }
 
+        }
+
+        private void GetGenresOfBookToUpdate(List<GenreOfBook> genresOfBookInsert, Guid id)
+        {
+            List<GenreOfBook> genresOfBookUpdate = new List<GenreOfBook>();
+            List<GenreOfBook> genresOfBookOriginal = GenreOfBookController.SelectDataGenresOfBook(id);
+            foreach (GenreOfBook genreOfBook in genresOfBookInsert)
+            {
+                if (genreOfBook.Id == Guid.Empty)
+                    genreOfBook.Id = Guid.NewGuid();
+                else
+                {
+                    genresOfBookUpdate.Add(genreOfBook);
+                    genresOfBookInsert.Remove(genreOfBook);
+                    genresOfBookOriginal.Remove(genreOfBook);
+                }
+            }
+            List<GenreOfBook> genresOfBookDelete = genresOfBookOriginal.Except(genresOfBookInsert).ToList();
+            if (genresOfBookUpdate.Count > 0) GenreOfBookController.UpdateDataGenresOfBook(genresOfBookUpdate);
+            if (genresOfBookDelete.Count > 0) GenreOfBookController.DeleteDataGenresOfBook(genresOfBookDelete);
+            if (genresOfBookInsert.Count > 0) GenreOfBookController.InsertDataGenresOfBook(genresOfBookInsert);
         }
 
         /// <summary>
@@ -284,7 +286,7 @@ namespace WpfTestTask.Views
             else
             {
                 if (Guid.TryParse(TextBoxId.Text, out Guid bookId))
-                    ListBoxGenres.ItemsSource = GenreController.SelectGenresFromGenresOfBookData(bookId);
+                    ListBoxGenres.ItemsSource = GenreController.SelectDataGenresFromGenresOfBook(bookId);
                 ListBoxGenres.IsEnabled = true;
                 ListBoxGenres.Visibility = Visibility.Visible;
                 LabelGenreAdd.Visibility = Visibility.Visible;

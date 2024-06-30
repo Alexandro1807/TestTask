@@ -53,6 +53,9 @@ namespace WpfTestTask
 
         private void InitializeFormToEndState()
         {
+            Style rowStyle = new Style(typeof(DataGridRow));
+            rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent, new MouseButtonEventHandler(DataGridBooks_DoubleClickOnRow)));
+            DataGridBooks.RowStyle = rowStyle;
             ComboBoxPageCount.Items.Remove(15);
             ComboBoxPageCount.IsEnabled = true;
             LabelShortcut.Visibility = LabelISBN.Visibility = LabelPageCurrentMin.Visibility = LabelPageTo.Visibility = LabelPageCurrentMax.Visibility = LabelPageFrom.Visibility = LabelPageMax.Visibility = Visibility.Visible;
@@ -76,27 +79,24 @@ namespace WpfTestTask
             string authorFilter = TextBoxAuthorFilter.Text != "" ? TextBoxAuthorFilter.Text : "undefined";
             string genreFilter = ComboBoxGenresFilter.Text != "" ? ComboBoxGenresFilter.Text : "undefined";
             if (!int.TryParse(TextBoxYearOfProductionFilter.Text, out int yearOfProductionFilter)) yearOfProductionFilter = -1;
-            if (!int.TryParse(ComboBoxPageCount.SelectedItem.ToString(), out int limit)) limit = 15;
+            if (!int.TryParse(ComboBoxPageCount.SelectedItem?.ToString(), out int limit)) limit = 15;
             int offset = limit * (int.Parse(TextBoxPage.Text) - 1);
             int rowCount = BookController.SelectBooksCount(nameFilter, authorFilter, genreFilter, yearOfProductionFilter);
-
             if (int.Parse(LabelPageMax.Content.ToString()) != rowCount)
             {
                 LabelPageMax.Content = rowCount;
-                if (!int.TryParse(ComboBoxPageCount.SelectedItem.ToString(), out int pageCount)) return;
                 ComboBoxPageCount.Items.Clear();
                 for (int i = 1; i <= Math.Min(rowCount, 100); i++) ComboBoxPageCount.Items.Add(i.ToString());
-                ComboBoxPageCount.SelectedItem = Math.Min(Math.Min(rowCount, pageCount), 15).ToString();
+                ComboBoxPageCount.SelectedItem = Math.Min(rowCount, 15).ToString();
             }
-
-
-            _bookList = BookController.SelectBooksData(nameFilter, authorFilter, genreFilter, yearOfProductionFilter, limit, offset, out int rowFilterCount);
+            _bookList = BookController.SelectDataBooks(nameFilter, authorFilter, genreFilter, yearOfProductionFilter, limit, offset, out int rowFilterCount);
             DataGridBooks.ItemsSource = _bookList;
             ImageCover.Source = null;
             TextBoxShortcut.Text = string.Empty;
             TextBoxISBN.Text = string.Empty;
             LabelPageCurrentMin.Content = offset + 1;
             LabelPageCurrentMax.Content = offset + rowFilterCount;
+            if (rowCount == 0) LabelPageCurrentMin.Content = 0;
             RefreshAnimationStopAsync();
         }
 
@@ -118,7 +118,7 @@ namespace WpfTestTask
         
         private async void RefreshAnimationStopAsync()
         {
-            await Task.Delay(2000); //Имитация ожидания обработки сервера под высокой нагрузкой
+            await Task.Delay(1000); //Имитация ожидания обработки сервера под высокой нагрузкой
             _isInitialized = true;
             ElementsOfFormTurnOnOrOffAsync();
         }
@@ -128,10 +128,14 @@ namespace WpfTestTask
             await Task.Delay(1); //Вместо миллисекундной задержки попробовать вызывать Task.Run(() => {})
             TextBlockImageNotFound.Visibility = Visibility.Hidden;
 
+            bool isRowCountNotNull = int.Parse(LabelPageMax.Content.ToString()) != 0;
+            ButtonPagePrev.IsEnabled = TextBoxPage.IsReadOnly = ButtonPageNext.IsEnabled = ComboBoxPageCount.IsEnabled = isRowCountNotNull;
+
             Visibility visibility = !_isInitialized ? Visibility.Visible : Visibility.Hidden;
             RectangleRefresh.Visibility = visibility;
             TextBlockRefresh.Visibility = visibility;
-            ButtonPagePrev.IsEnabled = TextBoxPage.IsEnabled = ButtonPageNext.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = GroupBoxFilters.IsEnabled = _isInitialized;
+            ButtonPagePrev.IsEnabled = TextBoxPage.IsEnabled = ButtonPageNext.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = _isInitialized && isRowCountNotNull;
+            GroupBoxFilters.IsEnabled = _isInitialized;
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
@@ -144,10 +148,10 @@ namespace WpfTestTask
         {
             try
             {
-                ButtonOpenEditBookWindow.IsEnabled = false;
+                ButtonOpenEditBookWindow.IsEnabled = ButtonOpenDeleteBookWindow.IsEnabled = false;
                 Book book = (sender as DataGrid).SelectedItem as Book;
                 if (book == null) return;
-                ButtonOpenEditBookWindow.IsEnabled = true;
+                ButtonOpenEditBookWindow.IsEnabled = ButtonOpenDeleteBookWindow.IsEnabled = true;
                 TextBoxShortcut.Text = book.Shortcut == string.Empty ? "Краткое содержание не определено." : book.Shortcut;
                 TextBoxISBN.Text = book.ISBN == string.Empty ? "Не определено." : book.ISBN;
                 if (book.CoverText != "undefined")
@@ -183,6 +187,10 @@ namespace WpfTestTask
             }            
         }
 
+        private void DataGridBooks_DoubleClickOnRow(object sender, MouseButtonEventArgs e)
+        {
+            ButtonOpenEditBookWindow_Click(sender, e);
+        }
         private void ButtonPageNext_Click(object sender, RoutedEventArgs e)
         {
             if (!int.TryParse(TextBoxPage.Text, out int textBoxPage)) return;
@@ -327,7 +335,9 @@ namespace WpfTestTask
 
         private void ButtonClearFilters_Click(object sender, RoutedEventArgs e)
         {
-
+            TextBoxNameFilter.Text = TextBoxAuthorFilter.Text = TextBoxYearOfProductionFilter.Text = string.Empty;
+            ComboBoxGenresFilter.SelectedIndex = 0;
+            RefreshingFilterTimerAsync(1);
         }
 
         private void LabelISBN_Loaded(object sender, RoutedEventArgs e)
@@ -348,30 +358,30 @@ namespace WpfTestTask
 
         private void TextBoxNameFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterTimerAsync();
+            RefreshingFilterTimerAsync(1000);
         }
 
         private void TextBoxAuthorFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterTimerAsync();
+            RefreshingFilterTimerAsync(1000);
         }
 
         private void ComboBoxGenresFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RefreshingFilterTimerAsync();
+            RefreshingFilterTimerAsync(100);
         }
 
         private void TextBoxYearOfProductionFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshingFilterTimerAsync();
+            RefreshingFilterTimerAsync(1000);
         }
 
-        private async void RefreshingFilterTimerAsync()
+        private async void RefreshingFilterTimerAsync(int delay)
         {
             lock (string.Empty) _isRefreshingFilterFlag = false;
             if (_refreshingFilterTimer != null) _refreshingFilterTimer.Dispose();
-            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterTimerSuccess), TextBoxNameFilter, 500, Timeout.Infinite);
-            await Task.Delay(500);
+            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterTimerSuccess), TextBoxNameFilter, delay, Timeout.Infinite);
+            await Task.Delay(delay);
             if (_isRefreshingFilterFlag) RefreshForm();
         }
 
@@ -392,13 +402,8 @@ namespace WpfTestTask
 
         private void ComboBoxGenresFilter_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Genre> genres = [new Genre(Guid.Empty, ""), .. GenreController.SelectGenresData(true)];
+            List<Genre> genres = [new Genre(Guid.Empty, ""), .. GenreController.SelectDataGenres(true)];
             ComboBoxGenresFilter.ItemsSource = genres;
-        }
-
-        private void DataGridBooks_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
         }
     }
 }
