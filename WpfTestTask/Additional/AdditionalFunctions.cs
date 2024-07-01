@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace WpfTestTask.Additional
@@ -19,7 +13,6 @@ namespace WpfTestTask.Additional
         public static readonly Regex regexLetters = new Regex(@"^[a-zA-Zа-яА-Я]+$");
         public static readonly Regex regexLettersLowerCase = new Regex(@"^[a-zа-я]+$");
         public static readonly Regex regexLettersUpperCase = new Regex(@"^[A-ZА-Я]+$");
-        public static readonly Regex regexISBN = new Regex("^(?=(?:\\D*\\d){10}(?:(?:\\D*\\d){3})?$)[\\d-]+$");
         
         public static void NumberPreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -82,6 +75,10 @@ namespace WpfTestTask.Additional
             textBox.SelectionStart = textBox.Text.Length;
         }
 
+        /// <summary>
+        /// Добавление случайных записей для наполнения базы
+        /// </summary>
+        /// <param name="count"></param>
         public static void AddRandomBooks(int count)
         {
             for (int i = 0; i < count; i++)

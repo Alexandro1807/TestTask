@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfTestTask.Models;
-using WpfTestTask.Database;
-using System.Xml.Linq;
-using System.Net;
+﻿using System.Data;
 using System.Windows.Controls;
+using WpfTestTask.Database;
+using WpfTestTask.Models;
 
 namespace WpfTestTask.Controllers
 {
@@ -66,6 +59,12 @@ namespace WpfTestTask.Controllers
             return (from Genre genre in items select genre).ToList();
         }
         #endregion
+
+        #region Добавление данных
+
+        #endregion
+
+        #region Модификация данных
         public static string ConvertGenresToGenresOnRow(List<Genre> genres)
         {
             string genresOnRow = string.Empty;
@@ -74,8 +73,9 @@ namespace WpfTestTask.Controllers
             if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
             return genresOnRow;
         }
+        #endregion
 
-        #region Добавление данных
+        #region Удаление данных
 
         #endregion
     }

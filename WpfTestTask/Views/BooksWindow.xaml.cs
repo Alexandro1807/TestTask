@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using WpfTestTask.Models;
 using System.ComponentModel;
-using WpfTestTask.Controllers;
-using System.IO;
 using WpfTestTask.Additional;
-using System.Windows.Media.Media3D;
-using System.Threading;
+using WpfTestTask.Controllers;
+using WpfTestTask.Models;
 using WpfTestTask.Views;
 
 namespace WpfTestTask
@@ -33,22 +20,11 @@ namespace WpfTestTask
         private int _pageCount = 1;
         private bool _isRefreshingFilterFlag = false;
         private Timer _refreshingFilterTimer = null;
+
+        #region Инициализация формы
         public BooksWindow()
         {
             InitializeComponent();
-        }
-        #region Инициализация формы
-        #endregion
-        #region Функции нажатия кнопок
-        #endregion
-        #region Дополнительные функции
-        #endregion
-        #region События изменений на форме
-        #endregion
-        private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshForm();
-            InitializeFormToEndState();
         }
 
         private void InitializeFormToEndState()
@@ -57,7 +33,6 @@ namespace WpfTestTask
             rowStyle.Setters.Add(new EventSetter(DataGridRow.MouseDoubleClickEvent, new MouseButtonEventHandler(DataGridBooks_DoubleClickOnRow)));
             DataGridBooks.RowStyle = rowStyle;
             ComboBoxPageCount.Items.Remove(15);
-            ComboBoxPageCount.IsEnabled = true;
             LabelShortcut.Visibility = LabelISBN.Visibility = LabelPageCurrentMin.Visibility = LabelPageTo.Visibility = LabelPageCurrentMax.Visibility = LabelPageFrom.Visibility = LabelPageMax.Visibility = Visibility.Visible;
             TextBoxPage.Visibility = TextBoxShortcut.Visibility = TextBoxISBN.Visibility = Visibility.Visible;
             BorderImage.Visibility = Visibility.Visible;
@@ -71,7 +46,7 @@ namespace WpfTestTask
         {
             //Анимация обновления
             RefreshAnimationStartAsync();
-            
+
             lock (string.Empty) _isRefreshingFilterFlag = false;
 
             //Установка фильтров
@@ -115,7 +90,7 @@ namespace WpfTestTask
                 }
             }
         }
-        
+
         private async void RefreshAnimationStopAsync()
         {
             await Task.Delay(1000); //Имитация ожидания обработки сервера под высокой нагрузкой
@@ -136,6 +111,15 @@ namespace WpfTestTask
             TextBlockRefresh.Visibility = visibility;
             ButtonPagePrev.IsEnabled = TextBoxPage.IsEnabled = ButtonPageNext.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxISBN.IsEnabled = BorderImage.IsEnabled = _isInitialized && isRowCountNotNull;
             GroupBoxFilters.IsEnabled = _isInitialized;
+            ComboBoxPageCount.IsEnabled = _isInitialized;
+        }
+        #endregion
+
+        #region Функции нажатия кнопок
+        private void ButtonGetBooks_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshForm();
+            InitializeFormToEndState();
         }
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
@@ -143,9 +127,73 @@ namespace WpfTestTask
             this.Hide();
             AddBookWindow win = new AddBookWindow();
             win.ShowDialog();
-            Show();
+            this.Show();
+            RefreshForm();
         }
 
+        private void ButtonOpenEditBookWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Book book = DataGridBooks.SelectedItem as Book;
+            if (book == null) return;
+            this.Hide();
+            EditBookWindow win = new EditBookWindow(book);
+            win.ShowDialog();
+            this.Show();
+            RefreshForm();
+        }
+
+        private void ButtonOpenDeleteBookWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Book book = DataGridBooks.SelectedItem as Book;
+            if (book == null) return;
+            this.Hide();
+            DeleteBookWindow win = new DeleteBookWindow(book);
+            win.ShowDialog();
+            this.Show();
+            RefreshForm();
+        }
+
+        private void ButtonClearFilters_Click(object sender, RoutedEventArgs e)
+        {
+            TextBoxNameFilter.Text = TextBoxAuthorFilter.Text = TextBoxYearOfProductionFilter.Text = string.Empty;
+            ComboBoxGenresFilter.SelectedIndex = 0;
+            RefreshingFilterTimerAsync(1);
+        }
+        #endregion
+
+        #region Дополнительные функции
+        private async void RefreshingFilterTimerAsync(int delay)
+        {
+            lock (string.Empty) _isRefreshingFilterFlag = false;
+            if (_refreshingFilterTimer != null) _refreshingFilterTimer.Dispose();
+            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterTimerSuccess), TextBoxNameFilter, delay, Timeout.Infinite);
+            await Task.Delay(delay);
+            if (_isRefreshingFilterFlag) RefreshForm();
+        }
+
+        private void RefreshingFilterTimerSuccess(object timerState)
+        {
+            lock (string.Empty) _isRefreshingFilterFlag = true;
+        }
+
+        private void RectangleRefresh_Loaded(object sender, RoutedEventArgs e)
+        {
+            RectangleRefresh.Visibility = Visibility.Hidden;
+        }
+
+        private void TextBlockRefresh_Loaded(object sender, RoutedEventArgs e)
+        {
+            TextBlockRefresh.Visibility = Visibility.Hidden;
+        }
+
+        private void ComboBoxGenresFilter_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<Genre> genres = [new Genre(Guid.Empty, ""), .. GenreController.SelectDataGenres(true)];
+            ComboBoxGenresFilter.ItemsSource = genres;
+        }
+        #endregion
+
+        #region События изменений на форме
         private void DataGridBooks_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
@@ -157,7 +205,7 @@ namespace WpfTestTask
                 TextBoxShortcut.Text = book.Shortcut == string.Empty ? "Краткое содержание не определено." : book.Shortcut;
                 TextBoxISBN.Text = book.ISBN == string.Empty ? "Не определено." : book.ISBN;
                 if (book.CoverText != "undefined")
-                    { ImageCover.Source = new BitmapImage(new Uri(book.CoverText)); TextBlockImageNotFound.Visibility = Visibility.Hidden; }
+                { ImageCover.Source = new BitmapImage(new Uri(book.CoverText)); TextBlockImageNotFound.Visibility = Visibility.Hidden; }
                 else { ImageCover.Source = null; TextBlockImageNotFound.Visibility = Visibility.Visible; }
                 //Починить обработку изображения через байтовый массив, после чего раскомментировать
                 //if (book.Cover != null && book.Cover.Length != 0)
@@ -186,7 +234,7 @@ namespace WpfTestTask
             catch (Exception ex)
             {
                 ImageCover.Source = null;
-            }            
+            }
         }
 
         private void DataGridBooks_DoubleClickOnRow(object sender, MouseButtonEventArgs e)
@@ -319,33 +367,6 @@ namespace WpfTestTask
             ButtonOpenDeleteBookWindow.Visibility = Visibility.Hidden;
         }
 
-        private void ButtonOpenEditBookWindow_Click(object sender, RoutedEventArgs e)
-        {
-            Book book = DataGridBooks.SelectedItem as Book;
-            if (book == null) return;
-            this.Hide();
-            EditBookWindow win = new EditBookWindow(book);
-            win.ShowDialog();
-            Show();
-        }
-
-        private void ButtonOpenDeleteBookWindow_Click(object sender, RoutedEventArgs e)
-        {
-            Book book = DataGridBooks.SelectedItem as Book;
-            if (book == null) return;
-            this.Hide();
-            DeleteBookWindow win = new DeleteBookWindow(book);
-            win.ShowDialog();
-            Show();
-        }
-
-        private void ButtonClearFilters_Click(object sender, RoutedEventArgs e)
-        {
-            TextBoxNameFilter.Text = TextBoxAuthorFilter.Text = TextBoxYearOfProductionFilter.Text = string.Empty;
-            ComboBoxGenresFilter.SelectedIndex = 0;
-            RefreshingFilterTimerAsync(1);
-        }
-
         private void LabelISBN_Loaded(object sender, RoutedEventArgs e)
         {
             LabelISBN.Visibility = Visibility.Hidden;
@@ -381,35 +402,6 @@ namespace WpfTestTask
         {
             RefreshingFilterTimerAsync(1000);
         }
-
-        private async void RefreshingFilterTimerAsync(int delay)
-        {
-            lock (string.Empty) _isRefreshingFilterFlag = false;
-            if (_refreshingFilterTimer != null) _refreshingFilterTimer.Dispose();
-            _refreshingFilterTimer = new Timer(new TimerCallback(RefreshingFilterTimerSuccess), TextBoxNameFilter, delay, Timeout.Infinite);
-            await Task.Delay(delay);
-            if (_isRefreshingFilterFlag) RefreshForm();
-        }
-
-        private void RefreshingFilterTimerSuccess(object timerState)
-        {
-            lock (string.Empty) _isRefreshingFilterFlag = true;
-        }
-
-        private void RectangleRefresh_Loaded(object sender, RoutedEventArgs e)
-        {
-            RectangleRefresh.Visibility = Visibility.Hidden;
-        }
-
-        private void TextBlockRefresh_Loaded(object sender, RoutedEventArgs e)
-        {
-            TextBlockRefresh.Visibility = Visibility.Hidden;
-        }
-
-        private void ComboBoxGenresFilter_Loaded(object sender, RoutedEventArgs e)
-        {
-            List<Genre> genres = [new Genre(Guid.Empty, ""), .. GenreController.SelectDataGenres(true)];
-            ComboBoxGenresFilter.ItemsSource = genres;
-        }
+        #endregion
     }
 }

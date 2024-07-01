@@ -1,21 +1,9 @@
 ﻿using Microsoft.Win32;
-using Microsoft.Windows.Themes;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
@@ -28,6 +16,8 @@ namespace WpfTestTask.Views
     public partial class EditBookWindow : Window
     {
         byte[] _cover = null;
+
+        #region Инициализация формы
         public EditBookWindow(Book book)
         {
             InitializeComponent();
@@ -63,6 +53,14 @@ namespace WpfTestTask.Views
             ComboBoxGenresAdd.IsEnabled = ComboBoxGenresRemove.IsEnabled = isTurnOn;
         }
 
+        private void SuccessForm()
+        {
+            SetTextBoxStateContent("Успешно. Повторить процедуру?", false);
+            ElementsOfFormTurnOnOrOffAsync(false);
+        }
+        #endregion
+
+        #region Функции нажатия кнопок
         private void ButtonEditCover_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new() { AddExtension = true, DefaultExt = ".png", Filter = "PNG (.png)|*.png|JPG (.jpg)|*.jpg|JPEG (.jpeg)|*.jpeg" };
@@ -129,15 +127,22 @@ namespace WpfTestTask.Views
             {
                 SetTextBoxStateContent(ex.Message, true);
             }
-
         }
 
-        private void SuccessForm()
+        private void ButtonReloadWindow_Click(object sender, RoutedEventArgs e)
         {
-            SetTextBoxStateContent("Успешно. Повторить процедуру?", false);
-            ElementsOfFormTurnOnOrOffAsync(false);
+            Book book = BookController.SelectDataBook(Guid.Parse(TextBoxId.Text.ToString()));
+            if (!TextBoxId.IsEnabled) ElementsOfFormTurnOnOrOffAsync(true);
+            InitializeFormToEndState(book);
         }
 
+        private void ButtonCloseWindow_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        #endregion
+
+        #region Дополнительные функции
         private void GetGenresOfBookToUpdate(List<GenreOfBook> genresOfBook, Guid id)
         {
             List<GenreOfBook> genresOfBookUpdate = new List<GenreOfBook>();
@@ -162,6 +167,51 @@ namespace WpfTestTask.Views
             if (genresOfBook.Count > 0) GenreOfBookController.InsertDataGenresOfBook(genresOfBook);
         }
 
+        /// <summary>
+        /// Появление ошибки. Размещение информации об ошибке.
+        /// </summary>
+        /// <param name="ex"></param>
+        private void SetTextBoxStateContent(string message, bool isError)
+        {
+            if (isError)
+                TextBoxState.Text = "Ошибка: " + message.Replace("\r\n", ". ").Replace(" .", "") + ". Попробуйте ещё раз.";
+            else
+                TextBoxState.Text = message;
+            TextBoxState.Visibility = Visibility.Visible;
+            SetTextBoxVisibilityCollapsedAsync(TextBoxState);
+        }
+
+        private async Task SetTextBoxVisibilityCollapsedAsync(TextBox textBox)
+        {
+            await Task.Delay(10000);
+            textBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void UpdateListBoxGenres(Genre genre, bool isAdd)
+        {
+            List<Genre> genres = GenreController.SelectGenresFromListBox(ListBoxGenres.Items);
+            switch (isAdd)
+            {
+                case true:
+                    {
+                        ComboBoxGenresAdd.SelectedItem = null;
+                        if (!genres.Any(g => g.Id == genre.Id))
+                            genres.Add(genre);
+                        break;
+                    }
+                case false:
+                    {
+                        ComboBoxGenresRemove.SelectedItem = null;
+                        if (genres.Any(g => g.Id == genre.Id))
+                            genres.Remove(genres.First(g => g.Id == genre.Id));
+                        break;
+                    }
+            }
+            ListBoxGenres.ItemsSource = genres;
+        }
+        #endregion
+
+        #region События изменений на форме
         /// <summary>
         /// Перенос значения элемента slider в элемент Textbox.
         /// </summary>
@@ -232,26 +282,6 @@ namespace WpfTestTask.Views
             SliderYearOfProduction.Value -= 100;
         }
 
-        /// <summary>
-        /// Появление ошибки. Размещение информации об ошибке.
-        /// </summary>
-        /// <param name="ex"></param>
-        private void SetTextBoxStateContent(string message, bool isError)
-        {
-            if (isError)
-                TextBoxState.Text = "Ошибка: " + message.Replace("\r\n", ". ").Replace(" .", "") + ". Попробуйте ещё раз.";
-            else
-                TextBoxState.Text = message;
-            TextBoxState.Visibility = Visibility.Visible;
-            SetTextBoxVisibilityCollapsedAsync(TextBoxState);
-        }
-
-        private async Task SetTextBoxVisibilityCollapsedAsync(TextBox textBox)
-        {
-            await Task.Delay(10000);
-            textBox.Visibility = Visibility.Collapsed;
-        }
-
         private void TextBoxState_Loaded(object sender, RoutedEventArgs e)
         {
             TextBoxState.Text = string.Empty;
@@ -268,29 +298,6 @@ namespace WpfTestTask.Views
         {
             Genre genre = (Genre)ComboBoxGenresRemove.SelectedItem;
             if (genre != null) UpdateListBoxGenres(genre, false);
-        }
-
-        private void UpdateListBoxGenres(Genre genre, bool isAdd)
-        {
-            List<Genre> genres = GenreController.SelectGenresFromListBox(ListBoxGenres.Items);
-            switch (isAdd)
-            {
-                case true:
-                    {
-                        ComboBoxGenresAdd.SelectedItem = null;
-                        if (!genres.Any(g => g.Id == genre.Id))
-                            genres.Add(genre);
-                        break;
-                    }
-                case false:
-                    {
-                        ComboBoxGenresRemove.SelectedItem = null;
-                        if (genres.Any(g => g.Id == genre.Id))
-                            genres.Remove(genres.First(g => g.Id == genre.Id));
-                        break;
-                    }
-            }
-            ListBoxGenres.ItemsSource = genres;
         }
 
         private void CheckBoxGenreUndefined_Click(object sender, RoutedEventArgs e)
@@ -320,18 +327,6 @@ namespace WpfTestTask.Views
                 ComboBoxGenresRemove.IsEnabled = true;
                 ComboBoxGenresRemove.Visibility = Visibility.Visible;
             }
-        }
-
-        private void ButtonReloadWindow_Click(object sender, RoutedEventArgs e)
-        {
-            Book book = BookController.SelectDataBook(Guid.Parse(TextBoxId.Text.ToString()));
-            if (!TextBoxId.IsEnabled) ElementsOfFormTurnOnOrOffAsync(true);
-            InitializeFormToEndState(book);
-        }
-
-        private void ButtonCloseWindow_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private void TextBoxName_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -383,5 +378,6 @@ namespace WpfTestTask.Views
         {
             AdditionalFunctions.TextPreviewKeyDown(sender, e);
         }
+        #endregion
     }
 }

@@ -9,14 +9,14 @@
     <Grid>
         <DataGrid x:Name="DataGridBooks" Margin="143,10,10,0" SelectionMode="Single" AutoGenerateColumns="False" SelectionChanged="DataGridBooks_SelectionChanged" Height="349" VerticalAlignment="Top">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="Id" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="200" />
-                <DataGridTextColumn Binding="{Binding LastModified}" IsReadOnly="true" Header="Последнее изменение" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="150"/>
-                <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="true" Header="Название" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
-                <DataGridTextColumn Binding="{Binding LastName}" IsReadOnly="true" Header="Фамилия" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
-                <DataGridTextColumn Binding="{Binding FirstName}" IsReadOnly="true" Header="Имя" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
-                <DataGridTextColumn Binding="{Binding MiddleName}" IsReadOnly="true" Header="Отчество" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
-                <DataGridTextColumn Binding="{Binding YearOfProduction}" IsReadOnly="true" Header="Год выпуска" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="50"/>
-                <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="100"/>
+                <DataGridTextColumn Binding="{Binding Id}" IsReadOnly="true" Header="Id" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="240" />
+                <DataGridTextColumn Binding="{Binding LastModified}" IsReadOnly="true" Header="Последнее изменение" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="140"/>
+                <DataGridTextColumn Binding="{Binding Name}" IsReadOnly="true" Header="Название" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="300"/>
+                <DataGridTextColumn Binding="{Binding LastName}" IsReadOnly="true" Header="Фамилия" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="115"/>
+                <DataGridTextColumn Binding="{Binding FirstName}" IsReadOnly="true" Header="Имя" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="115"/>
+                <DataGridTextColumn Binding="{Binding MiddleName}" IsReadOnly="true" Header="Отчество" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="115"/>
+                <DataGridTextColumn Binding="{Binding YearOfProduction}" IsReadOnly="true" Header="Год" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="33"/>
+                <DataGridTextColumn Binding="{Binding GenresOnRow}" IsReadOnly="true" Header="Жанры" CanUserReorder="False" CanUserResize="False" CanUserSort="False" Width="250"/>
             </DataGrid.Columns>
         </DataGrid>
         <Border x:Name="BorderImage" BorderBrush="Black" BorderThickness="1" Margin="10,10,0,0" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" Width="128" Loaded="BorderImage_Loaded">

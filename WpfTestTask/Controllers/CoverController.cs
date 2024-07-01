@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
+using System.IO;
 using WpfTestTask.Database;
 using WpfTestTask.Models;
 
@@ -12,9 +8,9 @@ namespace WpfTestTask.Controllers
     static class CoverController
     {
         #region Выборка данных
-        public static string SelectDataCoverText(Guid id)
+        public static string SelectDataCoverText(Guid bookId)
         {
-            string command = $"SELECT cover.\"CoverText\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{id}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
+            string command = $"SELECT cover.\"CoverText\" FROM public.\"Covers\" cover WHERE cover.\"BookId\" = '{bookId}' ORDER BY cover.\"LastModified\" DESC LIMIT 1";
             DataTable dataTable = PSqlConnection.SelectData(command);
             string coverText = string.Empty;
             foreach (DataRow row in dataTable.Rows)
@@ -47,8 +43,10 @@ namespace WpfTestTask.Controllers
 
         public static void InsertDataCoverWithoutImage(Book book)
         {
+            Guid coverId = Guid.NewGuid();
+            book.CoverText = CopyCoverFileToDatabaseFolder(book, coverId);
             string command = "INSERT INTO public.\"Covers\"(\"Id\", \"LastModified\", \"BookId\", \"Cover\", \"CoverText\") VALUES (" +
-                $"'{Guid.NewGuid()}', " +
+                $"'{coverId}', " +
                 $"'{book.LastModified}', " +
                 $"'{book.Id}', " +
                 $"null, " +
@@ -56,15 +54,25 @@ namespace WpfTestTask.Controllers
             PSqlConnection.ExecuteData(command);
         }
         #endregion
+
         #region Модификация данных
-        #endregion
-        #region Удаление данных
+        public static string CopyCoverFileToDatabaseFolder(Book book, Guid coverId)
+        {
+            string serverFolderPath = "C:\\temp_pgsql";
+            if (!Directory.Exists(serverFolderPath)) Directory.CreateDirectory(serverFolderPath);
+            string fileExtension = book.CoverText.Remove(0, book.CoverText.LastIndexOf("."));
+            string destinationPath = serverFolderPath + $"\\{coverId}{fileExtension}";
+            File.Copy(book.CoverText, destinationPath, true);
+            return destinationPath;
+        }
         #endregion
 
+        #region Удаление данных
         public static void DeleteDataCoverWithoutImage(Guid bookId)
         {
             string command = $"DELETE FROM public.\"Covers\" WHERE \"BookId\" = '{bookId}';";
             PSqlConnection.ExecuteData(command);
         }
+        #endregion
     }
 }

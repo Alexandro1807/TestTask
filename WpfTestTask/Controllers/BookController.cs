@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WpfTestTask.Database;
 using WpfTestTask.Models;
 
@@ -99,10 +94,8 @@ namespace WpfTestTask.Controllers
             PSqlConnection.ExecuteData(command);       
         }
         #endregion
+
         #region Модификация данных
-        #endregion
-        #region Удаление данных
-        #endregion
         public static void UpdateDataBooks(Book book) //Сохранение данных в таблицу Books
         {
             string command = "UPDATE public.\"Books\" SET " +
@@ -117,11 +110,14 @@ namespace WpfTestTask.Controllers
                 $"WHERE \"Id\" = '{book.Id}'";
             PSqlConnection.ExecuteData(command);
         }
+        #endregion
 
+        #region Удаление данных
         public static void DeleteDataBook(Guid id)
         {
             string command = $"DELETE FROM public.\"Books\" WHERE \"Id\" = '{id}';";
             PSqlConnection.ExecuteData(command);
         }
+        #endregion
     }
 }

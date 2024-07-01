@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using System.Windows.Controls;
 using WpfTestTask.Database;
 using WpfTestTask.Models;
@@ -47,18 +42,6 @@ namespace WpfTestTask.Controllers
         {
             return (from GenreOfBook genreOfBook in items select genreOfBook).ToList();
         }
-
-        public static string ConvertGenresOfBookToGenresOnRow(List<GenreOfBook> genresOfBook)
-        {
-            string genresOnRow = string.Empty;
-            foreach (GenreOfBook genreOfBook in genresOfBook)
-            {
-                Genre genre = GenreController.SelectDataGenre(genreOfBook.GenreId);
-                genresOnRow += (genre.Name + ", ");
-            }
-            if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
-            return genresOnRow;
-        }
         #endregion
 
         #region Добавление данных
@@ -78,6 +61,7 @@ namespace WpfTestTask.Controllers
         }
         #endregion
 
+        #region Модификация данных
         public static void UpdateDataGenresOfBook(List<GenreOfBook> genresOfBook)
         {
             foreach (GenreOfBook genreOfBook in genresOfBook)
@@ -91,6 +75,20 @@ namespace WpfTestTask.Controllers
             }
         }
 
+        public static string ConvertGenresOfBookToGenresOnRow(List<GenreOfBook> genresOfBook)
+        {
+            string genresOnRow = string.Empty;
+            foreach (GenreOfBook genreOfBook in genresOfBook)
+            {
+                Genre genre = GenreController.SelectDataGenre(genreOfBook.GenreId);
+                genresOnRow += (genre.Name + ", ");
+            }
+            if (genresOnRow.Length > 0) genresOnRow = genresOnRow.Remove(genresOnRow.Length - 2);
+            return genresOnRow;
+        }
+        #endregion
+
+        #region Удаление данных
         public static void DeleteDataGenresOfBook(List<GenreOfBook> genresOfBook)
         {
             string command = "DELETE FROM public.\"GenresOfBook\" genreOfBook WHERE genreOfBook.\"Id\" IN (";
@@ -107,5 +105,6 @@ namespace WpfTestTask.Controllers
             string command = $"DELETE FROM public.\"GenresOfBook\" genreOfBook WHERE genreOfBook.\"BookId\" = '{bookId}'";
             PSqlConnection.ExecuteData(command);
         }
+        #endregion
     }
 }

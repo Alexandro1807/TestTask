@@ -1,20 +1,9 @@
 ﻿using Microsoft.Win32;
-using Microsoft.Windows.Themes;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
@@ -27,6 +16,8 @@ namespace WpfTestTask
     public partial class AddBookWindow : Window
     {
         byte[] _cover = null;
+
+        #region Инициализация формы
         public AddBookWindow()
         {
             InitializeComponent();
@@ -51,6 +42,25 @@ namespace WpfTestTask
             }
         }
 
+        private void SuccessForm()
+        {
+            SetTextBoxStateContent("Успешно. Повторить процедуру?", false);
+            ElementsOfFormTurnOnOrOffAsync(false);
+        }
+
+        private void ElementsOfFormTurnOnOrOffAsync(bool isTurnOn)
+        {
+            ButtonAddBook.IsEnabled = ButtonMinusOneHundredToYearOfProduction.IsEnabled = ButtonMinusTenToYearOfProduction.IsEnabled = ButtonMinusOneToYearOfProduction.IsEnabled = ButtonPlusOneToYearOfProduction.IsEnabled = ButtonPlusTenToYearOfProduction.IsEnabled = ButtonPlusOneHundredToYearOfProduction.IsEnabled = ButtonAddCover.IsEnabled = isTurnOn;
+            TextBoxName.IsEnabled = TextBoxLastName.IsEnabled = TextBoxFirstName.IsEnabled = TextBoxMiddleName.IsEnabled = TextBoxISBN.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxYearOfProduction.IsEnabled = isTurnOn;
+            SliderYearOfProduction.IsEnabled = isTurnOn;
+            LabelCoverName.IsEnabled = isTurnOn;
+            ListBoxGenres.IsEnabled = isTurnOn;
+            CheckBoxGenreUndefined.IsEnabled = isTurnOn;
+            ComboBoxGenresAdd.IsEnabled = ComboBoxGenresRemove.IsEnabled = isTurnOn;
+        }
+        #endregion
+
+        #region Функции нажатия кнопок
         private void ButtonAddCover_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new() { AddExtension = true, DefaultExt = ".png", Filter = "PNG (.png)|*.png|JPG (.jpg)|*.jpg|JPEG (.jpeg)|*.jpeg" };
@@ -58,7 +68,7 @@ namespace WpfTestTask
             if (result == true)
             {
                 //ПОПЫТКИ СОХРАНИТЬ ИЗОБРАЖЕНИЕ В ВИДЕ БАЙТОВОГО МАССИВА
-                
+
                 //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
                 //encoder.Frames.Add(BitmapFrame.Create(new BitmapImage(new Uri(dialog.FileName))));
                 //using (MemoryStream MS = new MemoryStream())
@@ -90,14 +100,16 @@ namespace WpfTestTask
                 int yearOfProduction = 0;
                 if (!int.TryParse(TextBoxYearOfProduction.Text, out yearOfProduction)) yearOfProduction = DateTime.Now.Year;
                 string name, firstName, lastName, middleName, isbn, shortcut, genresOnRow, coverText;
-                List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
                 name = TextBoxName.Text;
                 firstName = TextBoxFirstName.Text;
                 lastName = TextBoxLastName.Text;
                 middleName = TextBoxMiddleName.Text;
                 isbn = TextBoxISBN.Text;
                 shortcut = TextBoxShortcut.Text;
-                genresOfBook = GenreOfBookController.SelectGenresOfBookFromListBox(ListBoxGenres.Items);
+                List<Genre> genres = GenreController.SelectGenresFromListBox(ListBoxGenres.Items);
+                List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
+                foreach (Genre genre in genres)
+                    genresOfBook.Add(new GenreOfBook(Guid.NewGuid(), lastModified, id, genre.Id));
                 genresOnRow = GenreOfBookController.ConvertGenresOfBookToGenresOnRow(genresOfBook);
                 coverText = ((string)LabelCoverName.Content).Replace("Путь: ", "");
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortcut, genresOfBook, genresOnRow, coverText, _cover);
@@ -111,26 +123,64 @@ namespace WpfTestTask
             {
                 SetTextBoxStateContent(ex.Message, true);
             }
-            
         }
 
-        private void SuccessForm()
+        private void ButtonReloadWindow_Click(object sender, RoutedEventArgs e)
         {
-            SetTextBoxStateContent("Успешно. Повторить процедуру?", false);
-            ElementsOfFormTurnOnOrOffAsync(false);
+            ElementsOfFormTurnOnOrOffAsync(true);
+            InitializeFormToEndState(false);
         }
 
-        private void ElementsOfFormTurnOnOrOffAsync(bool isTurnOn)
+        private void ButtonCloseWindow_Click(object sender, RoutedEventArgs e)
         {
-            ButtonAddBook.IsEnabled = ButtonMinusOneHundredToYearOfProduction.IsEnabled = ButtonMinusTenToYearOfProduction.IsEnabled = ButtonMinusOneToYearOfProduction.IsEnabled = ButtonPlusOneToYearOfProduction.IsEnabled = ButtonPlusTenToYearOfProduction.IsEnabled = ButtonPlusOneHundredToYearOfProduction.IsEnabled = ButtonAddCover.IsEnabled = isTurnOn;
-            TextBoxName.IsEnabled = TextBoxLastName.IsEnabled = TextBoxFirstName.IsEnabled = TextBoxMiddleName.IsEnabled = TextBoxISBN.IsEnabled = TextBoxShortcut.IsEnabled = TextBoxYearOfProduction.IsEnabled = isTurnOn;
-            SliderYearOfProduction.IsEnabled = isTurnOn;
-            LabelCoverName.IsEnabled = isTurnOn;
-            ListBoxGenres.IsEnabled = isTurnOn;
-            CheckBoxGenreUndefined.IsEnabled = isTurnOn;
-            ComboBoxGenresAdd.IsEnabled = ComboBoxGenresRemove.IsEnabled = isTurnOn;
+            this.Close();
+        }
+        #endregion
+
+        #region Дополнительные функции
+        /// <summary>
+        /// Появление ошибки. Размещение информации об ошибке.
+        /// </summary>
+        /// <param name="ex"></param>
+        private void SetTextBoxStateContent(string message, bool isError)
+        {
+            if (isError)
+                TextBoxState.Text = "Ошибка: " + message.Replace("\r\n", ". ").Replace(" .", "") + ". Попробуйте ещё раз.";
+            else
+                TextBoxState.Text = message;
+            TextBoxState.Visibility = Visibility.Visible;
+            SetTextBoxVisibilityCollapsedAsync(TextBoxState);
         }
 
+        private async Task SetTextBoxVisibilityCollapsedAsync(TextBox textBox)
+        {
+            await Task.Delay(10000);
+            textBox.Visibility = Visibility.Collapsed;
+        }
+
+        private void UpdateListBoxGenres(Genre item, bool isAdd)
+        {
+            switch (isAdd)
+            {
+                case true:
+                    {
+                        ComboBoxGenresAdd.SelectedItem = null;
+                        if (ListBoxGenres.Items.IndexOf(item) == -1)
+                            ListBoxGenres.Items.Add(item);
+                        break;
+                    }
+                case false:
+                    {
+                        ComboBoxGenresRemove.SelectedItem = null;
+                        if (ListBoxGenres.Items.IndexOf(item) != -1)
+                            ListBoxGenres.Items.Remove(item);
+                        break;
+                    }
+            }
+        }
+        #endregion
+
+        #region События изменений на форме
         /// <summary>
         /// Перенос значения элемента slider в элемент Textbox.
         /// </summary>
@@ -201,26 +251,6 @@ namespace WpfTestTask
             SliderYearOfProduction.Value -= 100;
         }
 
-        /// <summary>
-        /// Появление ошибки. Размещение информации об ошибке.
-        /// </summary>
-        /// <param name="ex"></param>
-        private void SetTextBoxStateContent(string message, bool isError)
-        {
-            if (isError)
-                TextBoxState.Text = "Ошибка: " + message.Replace("\r\n", ". ").Replace(" .", "") + ". Попробуйте ещё раз.";
-            else
-                TextBoxState.Text = message;
-            TextBoxState.Visibility = Visibility.Visible;
-            SetTextBoxVisibilityCollapsedAsync(TextBoxState);
-        }
-
-        private async Task SetTextBoxVisibilityCollapsedAsync(TextBox textBox)
-        {
-            await Task.Delay(10000);
-            textBox.Visibility = Visibility.Collapsed;
-        }
-
         private void LabelCoverName_Loaded(object sender, RoutedEventArgs e)
         {
             LabelCoverName.Visibility = Visibility.Hidden;
@@ -242,27 +272,6 @@ namespace WpfTestTask
         {
             Genre item = (Genre)ComboBoxGenresRemove.SelectedItem;
             if (item != null) UpdateListBoxGenres(item, false);
-        }
-
-        private void UpdateListBoxGenres(Genre item, bool isAdd)
-        {
-            switch (isAdd)
-            {
-                case true:
-                    {
-                        ComboBoxGenresAdd.SelectedItem = null;
-                        if (ListBoxGenres.Items.IndexOf(item) == -1)
-                            ListBoxGenres.Items.Add(item);
-                        break;
-                    }
-                case false:
-                    {
-                        ComboBoxGenresRemove.SelectedItem = null;
-                        if (ListBoxGenres.Items.IndexOf(item) != -1)
-                            ListBoxGenres.Items.Remove(item);
-                        break;
-                    }
-            }
         }
 
         private void CheckBoxGenreUndefined_Click(object sender, RoutedEventArgs e)
@@ -290,17 +299,6 @@ namespace WpfTestTask
                 ComboBoxGenresRemove.IsEnabled = true;
                 ComboBoxGenresRemove.Visibility = Visibility.Visible;
             }
-        }
-
-        private void ButtonReloadWindow_Click(object sender, RoutedEventArgs e)
-        {
-            ElementsOfFormTurnOnOrOffAsync(true);
-            InitializeFormToEndState(false);
-        }
-
-        private void ButtonCloseWindow_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private void TextBoxName_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -352,5 +350,6 @@ namespace WpfTestTask
         {
             AdditionalFunctions.TextPreviewKeyDown(sender, e);
         }
+        #endregion
     }
 }

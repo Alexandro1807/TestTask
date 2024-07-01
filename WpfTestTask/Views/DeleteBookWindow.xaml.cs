@@ -1,23 +1,5 @@
-﻿using Microsoft.Win32;
-using Microsoft.Windows.Themes;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Transactions;
+﻿using System.Transactions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 
@@ -28,6 +10,7 @@ namespace WpfTestTask.Views
     /// </summary>
     public partial class DeleteBookWindow : Window
     {
+        #region Инициализация формы
         public DeleteBookWindow(Book book)
         {
             InitializeComponent();
@@ -39,7 +22,9 @@ namespace WpfTestTask.Views
             TextBoxName.Text = book.Name;
             TextBoxAuthor.Text = string.Join(" ", book.LastName, book.FirstName, book.MiddleName);
         }
+        #endregion
 
+        #region Функции нажатия кнопок
         private void ButtonNo_Click(object sender, RoutedEventArgs e)
         {
             LabelState.Content = "Вы отказались от удаления книги!";
@@ -69,7 +54,9 @@ namespace WpfTestTask.Views
                 CloseWindowAsync(5000);
             }
         }
+        #endregion
 
+        #region Дополнительные функции
         /// <summary>
         /// Асинхронное закрытие формы с обратным отсчётом в дополнительной строке состояния
         /// </summary>
@@ -90,7 +77,9 @@ namespace WpfTestTask.Views
             }
             this.Close();
         }
+        #endregion
 
+        #region События изменений на форме
         private void LabelState_Loaded(object sender, RoutedEventArgs e)
         {
             LabelState.Content = string.Empty;
@@ -100,5 +89,6 @@ namespace WpfTestTask.Views
         {
             LabelBackTimer.Visibility = Visibility.Hidden;
         }
+        #endregion
     }
 }
