@@ -42,7 +42,8 @@ namespace WpfTestTask.Views
 
         private void ButtonNo_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            LabelState.Content = "Вы отказались от удаления книги!";
+            CloseWindowAsync(2000);
         }
 
         private void ButtonYes_Click(object sender, RoutedEventArgs e)
@@ -57,16 +58,47 @@ namespace WpfTestTask.Views
                     BookController.DeleteDataBook(id);
                     t.Complete();
                 }
-                
+                LabelState.Content = "Удаление книги прошло успешно!";
             }
             catch (Exception ex)
             {
-
+                LabelState.Content = "Ошибка: " + ex.Message;
             }
             finally
             {
-
+                CloseWindowAsync(5000);
             }
+        }
+
+        /// <summary>
+        /// Асинхронное закрытие формы с обратным отсчётом в дополнительной строке состояния
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="delay"></param>
+        /// <returns></returns>
+        private async Task CloseWindowAsync(int delay)
+        {
+            ButtonYes.IsEnabled = false;
+            ButtonNo.IsEnabled = false;
+            LabelBackTimer.Visibility = Visibility.Visible;
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            while (stopwatch.IsRunning)
+            {
+                LabelBackTimer.Content = $"Выход через: " + await Task.Run(() => { return ((delay - stopwatch.Elapsed.TotalMilliseconds) / 1000).ToString("F3"); });
+                if (stopwatch.Elapsed.TotalMilliseconds >= delay) stopwatch.Stop();
+            }
+            this.Close();
+        }
+
+        private void LabelState_Loaded(object sender, RoutedEventArgs e)
+        {
+            LabelState.Content = string.Empty;
+        }
+
+        private void LabelBackTimer_Loaded(object sender, RoutedEventArgs e)
+        {
+            LabelBackTimer.Visibility = Visibility.Hidden;
         }
     }
 }

@@ -125,7 +125,7 @@ namespace WpfTestTask
 
         private async void ElementsOfFormTurnOnOrOffAsync()
         {
-            await Task.Delay(1); //Вместо миллисекундной задержки попробовать вызывать Task.Run(() => {})
+            //await Task.Delay(1); //Вместо миллисекундной задержки попробовать вызывать Task.Run(() => {})
             TextBlockImageNotFound.Visibility = Visibility.Hidden;
 
             bool isRowCountNotNull = int.Parse(LabelPageMax.Content.ToString()) != 0;
@@ -140,8 +140,10 @@ namespace WpfTestTask
 
         private void ButtonOpenAddBookWindow_Click(object sender, RoutedEventArgs e)
         {
+            this.Hide();
             AddBookWindow win = new AddBookWindow();
-            win.Show();
+            win.ShowDialog();
+            Show();
         }
 
         private void DataGridBooks_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -225,24 +227,20 @@ namespace WpfTestTask
             TextBoxPage.Visibility = Visibility.Hidden;
         }
 
-        private void TextBoxPage_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = AdditionalFunctions.regexNumbers.IsMatch(e.Text);
-            if (!e.Handled)
-                if (int.Parse(TextBoxPage.Text + e.Text) > _pageCount) e.Handled = true;
-        }
-
         private void TextBoxPage_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Back)
-                if (TextBoxPage.Text.Remove(TextBoxPage.Text.Length - 1, 1).Length <= 0) e.Handled = true;
+            AdditionalFunctions.NumberPreviewKeyDown(sender, e);
         }
 
+        private void TextBoxPage_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            AdditionalFunctions.NumberPreviewTextInput(sender, e, _pageCount);
+        }
 
         private void TextBoxPage_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (TextBoxPage.Text == "") return;
-            if (_isInitialized) RefreshForm(); //Обновление формы (повторный вызов функции)
+            if (_isInitialized) RefreshForm();
         }
 
         private void LabelPageCurrentMax_Loaded(object sender, RoutedEventArgs e)
@@ -317,6 +315,7 @@ namespace WpfTestTask
 
         private void ButtonOpenDeleteBookWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            ButtonOpenDeleteBookWindow.IsEnabled = false;
             ButtonOpenDeleteBookWindow.Visibility = Visibility.Hidden;
         }
 
@@ -324,13 +323,20 @@ namespace WpfTestTask
         {
             Book book = DataGridBooks.SelectedItem as Book;
             if (book == null) return;
+            this.Hide();
             EditBookWindow win = new EditBookWindow(book);
-            win.Show();
+            win.ShowDialog();
+            Show();
         }
 
         private void ButtonOpenDeleteBookWindow_Click(object sender, RoutedEventArgs e)
         {
-
+            Book book = DataGridBooks.SelectedItem as Book;
+            if (book == null) return;
+            this.Hide();
+            DeleteBookWindow win = new DeleteBookWindow(book);
+            win.ShowDialog();
+            Show();
         }
 
         private void ButtonClearFilters_Click(object sender, RoutedEventArgs e)

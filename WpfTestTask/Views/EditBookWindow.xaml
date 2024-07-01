@@ -5,23 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfTestTask.Views"
         mc:Ignorable="d"
-        Title="Изменение книги" Height="500" Width="1000" ResizeMode="NoResize">
+        Title="Изменение книги" Height="400" Width="900" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="TextBoxName" HorizontalAlignment="Left" Margin="161,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Название книги"/>
-        <TextBox x:Name="TextBoxLastName" HorizontalAlignment="Left" Margin="161,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Фамилия автора"/>
-        <TextBox x:Name="TextBoxFirstName" HorizontalAlignment="Left" Margin="161,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Имя автора"/>
-        <TextBox x:Name="TextBoxMiddleName" HorizontalAlignment="Left" Margin="161,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Отчество автора"/>
-        <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="161,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="ISBN книги"/>
-        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="127" ToolTip="Краткое содержание" AcceptsReturn="True"/>
-        <TextBox x:Name="TextBoxError" Text="Строка состояния, в которой возникает сообщение об ошибке при ошибке изменения, которое через 10 секунд асинхронно исчезает." HorizontalAlignment="Left" Margin="10,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="887" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="20" BorderBrush="Black" SelectionBrush="{x:Null}" Loaded="TextBoxError_Loaded" Background="White" SelectionTextBrush="{x:Null}" SelectionOpacity="0"/>
+        <TextBox x:Name="TextBoxName" HorizontalAlignment="Left" Margin="161,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Название книги" PreviewKeyDown="TextBoxName_PreviewKeyDown"/>
+        <TextBox x:Name="TextBoxLastName" HorizontalAlignment="Left" Margin="161,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Фамилия автора" PreviewKeyDown="TextBoxLastName_PreviewKeyDown" PreviewTextInput="TextBoxLastName_PreviewTextInput"/>
+        <TextBox x:Name="TextBoxFirstName" HorizontalAlignment="Left" Margin="161,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Имя автора" PreviewKeyDown="TextBoxFirstName_PreviewKeyDown" PreviewTextInput="TextBoxFirstName_PreviewTextInput"/>
+        <TextBox x:Name="TextBoxMiddleName" HorizontalAlignment="Left" Margin="161,109,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="Отчество автора" PreviewKeyDown="TextBoxMiddleName_PreviewKeyDown" PreviewTextInput="TextBoxMiddleName_PreviewTextInput"/>
+        <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="161,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" ToolTip="ISBN книги" PreviewKeyDown="TextBoxISBN_PreviewKeyDown" PreviewTextInput="TextBoxISBN_PreviewTextInput"/>
+        <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="161,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" VerticalScrollBarVisibility="Auto" SpellCheck.IsEnabled="True" Language="ru-ru" Height="127" ToolTip="Краткое содержание" AcceptsReturn="True" PreviewKeyDown="TextBoxShortcut_PreviewKeyDown"/>
+        <TextBox x:Name="TextBoxState" Text="Строка состояния с сообщением об ошибке или успехе, которое через несколько секунд асинхронно исчезает." Margin="10,325,3,0" TextWrapping="Wrap" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" BorderBrush="Black" SelectionBrush="{x:Null}" Loaded="TextBoxState_Loaded" Background="White" SelectionTextBrush="{x:Null}" SelectionOpacity="0" Height="20" VerticalAlignment="Top"/>
         <Label Content="Название книги" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Фамилия автора" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
         <Label Content="Имя автора" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
         <Label Content="Отчество автора" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top"/>
         <Label Content="ISBN книги" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top"/>
         <Label Content="Краткое содержание" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="ButtonEditBook" Content="Изменить книгу" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top" Click="ButtonEditBook_Click" Width="146"/>
-        <Border BorderBrush="Black" BorderThickness="1" Margin="466,16,0,0" Height="304" VerticalAlignment="Top" HorizontalAlignment="Left" Width="431">
+        <Button x:Name="ButtonEditBook" Content="Изменить книгу" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top" Click="ButtonEditBook_Click" Width="146" Background="Lime"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="466,16,3,0" Height="304" VerticalAlignment="Top">
             <Grid>
                 <TextBox x:Name="TextBoxYearOfProduction" HorizontalAlignment="Left" Margin="209,14,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="86" Focusable="False" IsReadOnly="True" IsUndoEnabled="False" Height="22"/>
                 <Button x:Name="ButtonPlusOneToYearOfProduction" Content="+1" HorizontalAlignment="Left" Margin="300,14,0,0" VerticalAlignment="Top" Width="32" Height="22" Click="ButtonPlusOneToYearOfProduction_Click"/>
@@ -48,5 +48,15 @@
         </Border>
         <TextBox x:Name="TextBoxId" IsEnabled="false" HorizontalAlignment="Left" Margin="221,302,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="240"/>
         <Label Content="Id книги" HorizontalAlignment="Left" Margin="161,297,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="ButtonCloseWindow" Content="Вернуться" HorizontalAlignment="Left" Margin="10,275,0,0" VerticalAlignment="Top" Width="146" Background="Red" Foreground="White" Click="ButtonCloseWindow_Click"/>
+        <Button x:Name="ButtonReloadWindow" Content="Начать заново" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" Width="146" Foreground="White" Click="ButtonReloadWindow_Click">
+            <Button.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="Black" Offset="1"/>
+                    <GradientStop Color="#FF051DEA" Offset="0.747"/>
+                    <GradientStop Color="#FFFF3A00" Offset="0.397"/>
+                </RadialGradientBrush>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

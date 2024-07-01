@@ -82,11 +82,11 @@ namespace WpfTestTask.Controllers
         {
             foreach (GenreOfBook genreOfBook in genresOfBook)
             {
-                string command = "UPDATE public.\"GenresOfBook\" genreOfBook SET" +
-                    $"genreOfBook.LastModified = '{genreOfBook.LastModified}', " +
-                    $"genreOfBook.BookId = '{genreOfBook.BookId}', " +
-                    $"genreOfBook.GenreId = '{genreOfBook.GenreId}') " +
-                    $"WHERE genreOfBook.\"Id\" = '{genreOfBook.Id}'";
+                string command = "UPDATE public.\"GenresOfBook\" SET " +
+                    $"\"LastModified\" = '{genreOfBook.LastModified}', " +
+                    $"\"BookId\" = '{genreOfBook.BookId}', " +
+                    $"\"GenreId\" = '{genreOfBook.GenreId}' " +
+                    $"WHERE \"Id\" = '{genreOfBook.Id}'";
                 PSqlConnection.ExecuteData(command);
             }
         }
