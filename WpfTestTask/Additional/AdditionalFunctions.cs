@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WpfTestTask.Models;
 
 namespace WpfTestTask.Additional
 {
@@ -81,9 +82,28 @@ namespace WpfTestTask.Additional
         /// <param name="count"></param>
         public static void AddRandomBooks(int count)
         {
+            string[] users = System.IO.File.ReadAllLines("D:\\temp\\Рандом.csv");
+            string[] names = System.IO.File.ReadAllLines("D:\\temp\\названия.txt");
+            string[] shortcuts = System.IO.File.ReadAllLines("D:\\temp\\описания.txt");
             for (int i = 0; i < count; i++)
             {
-
+                string[] user = users[(new Random().Next(count) + count) % 500].Split(';');
+                Guid id = Guid.NewGuid();
+                DateTime lastModified = DateTime.Parse($"{new Random().Next(1, 29)}.{new Random().Next(1, 13)}.{new Random().Next(1997, 2025)} {new Random().Next(0, 24)}:{new Random().Next(0, 60)}:{new Random().Next(0, 60)}");
+                string name = names[(new Random().Next(count) + count) % 250];
+                string lastName = user[0];
+                string firstName = user[1];
+                string middleName = user[2];
+                int yearOfProduction = Math.Max(new Random().Next(2100), int.Parse(user[3]));
+                string isbn = $"{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}-{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}";
+                string shortCut = "";
+                for (int j = 0; j < 5; j++)
+                    shortCut += new Random().Next(0, 1) == 0 ? shortcuts[new Random().Next(32)] : "";
+                List<GenreOfBook> genresOfBook = null;
+                string genresOnRow = null;
+                string coverText = null;
+                byte[] cover = null;
+                Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortCut, genresOfBook, genresOnRow, coverText, cover);
             }
         }
     }

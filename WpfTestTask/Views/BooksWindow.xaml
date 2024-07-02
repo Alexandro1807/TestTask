@@ -32,9 +32,9 @@
         <Label x:Name="LabelPageCurrentMax" Content="0" HorizontalAlignment="Left" Margin="39,278,0,0" VerticalAlignment="Top" Width="28" Height="25" Loaded="LabelPageCurrentMax_Loaded"/>
         <Label x:Name="LabelPageFrom" Content="из" HorizontalAlignment="Left" Margin="71,278,0,0" VerticalAlignment="Top" Width="24" Height="25" Loaded="LabelFrom_Loaded"/>
         <Label x:Name="LabelPageMax" Content="0" HorizontalAlignment="Left" Margin="88,278,0,0" VerticalAlignment="Top" Width="51" Height="25" Loaded="LabelPageMax_Loaded"/>
-        <Button x:Name="ButtonPagePrev" Content="←" HorizontalAlignment="Left" Margin="11,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPagePrev_Click" Loaded="ButtonPagePrev_Loaded"/>
+        <Button x:Name="ButtonPagePrev" Content="«" HorizontalAlignment="Left" Margin="11,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPagePrev_Click" Loaded="ButtonPagePrev_Loaded"/>
         <TextBox x:Name="TextBoxPage" Text="1" PreviewTextInput="TextBoxPage_PreviewTextInput" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="35,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="78" Height="20" Loaded="TextBoxPage_Loaded" TextChanged="TextBoxPage_TextChanged" PreviewKeyDown="TextBoxPage_PreviewKeyDown"/>
-        <Button x:Name="ButtonPageNext" Content="→" HorizontalAlignment="Left" Margin="119,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPageNext_Click" Loaded="ButtonPageNext_Loaded" Height="20"/>
+        <Button x:Name="ButtonPageNext" Content="»" HorizontalAlignment="Left" Margin="119,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPageNext_Click" Loaded="ButtonPageNext_Loaded" Height="20"/>
         <Label Content="Кол-во книг:" HorizontalAlignment="Left" Margin="11,333,0,0" VerticalAlignment="Top" Width="79"/>
         <ComboBox x:Name="ComboBoxPageCount" HorizontalAlignment="Left" Margin="95,333,0,0" VerticalAlignment="Top" Width="44" Height="26" SelectionChanged="ComboBoxPageCount_SelectionChanged" Loaded="ComboBoxPageCount_Loaded"/>
         <Button x:Name="ButtonGetBooks" Content="Просмотреть книги" Margin="10,364,0,0" Click="ButtonGetBooks_Click" HorizontalAlignment="Left" Width="128" Height="20" VerticalAlignment="Top"/>
