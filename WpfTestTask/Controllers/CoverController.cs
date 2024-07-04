@@ -61,7 +61,9 @@ namespace WpfTestTask.Controllers
             string serverFolderPath = "C:\\temp_pgsql";
             if (!Directory.Exists(serverFolderPath)) Directory.CreateDirectory(serverFolderPath);
             string fileExtension = book.CoverText.Remove(0, book.CoverText.LastIndexOf("."));
-            string destinationPath = serverFolderPath + $"\\{coverId}{fileExtension}";
+            string destinationFolder = serverFolderPath + $"\\{book.Id}";
+            if (!Directory.Exists(destinationFolder)) Directory.CreateDirectory(destinationFolder);
+            string destinationPath = destinationFolder + $"\\{coverId}{fileExtension}";
             File.Copy(book.CoverText, destinationPath, true);
             return destinationPath;
         }
