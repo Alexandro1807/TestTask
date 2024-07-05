@@ -93,6 +93,25 @@ namespace WpfTestTask.Controllers
                 $"'{book.Shortcut}');";
             PSqlConnection.ExecuteData(command);       
         }
+
+        public static void InsertDataBooks(List<Book> books) //Сохранение множества данных в таблицу Books
+        {
+            string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES (";
+            foreach(Book book in books)
+            {
+                command += $"'{book.Id}', " +
+                $"'{book.LastModified}', " +
+                $"'{book.Name}', " +
+                $"'{book.FirstName}', " +
+                $"'{book.LastName}', " +
+                $"'{book.MiddleName}', " +
+                $"'{book.YearOfProduction}', " +
+                $"'{book.ISBN}', " +
+                $"'{book.Shortcut}'), ";
+            }
+            command = command.Remove(command.LastIndexOf(", ")) + ";";
+            PSqlConnection.ExecuteData(command);
+        }
         #endregion
 
         #region Модификация данных

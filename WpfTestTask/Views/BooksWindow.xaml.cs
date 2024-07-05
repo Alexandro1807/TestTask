@@ -403,5 +403,10 @@ namespace WpfTestTask
             RefreshingFilterTimerAsync(1000);
         }
         #endregion
+
+        private void ButtonAddRandom_Click(object sender, RoutedEventArgs e)
+        {
+            AdditionalFunctions.AddRandomBooks(3000);
+        }
     }
 }

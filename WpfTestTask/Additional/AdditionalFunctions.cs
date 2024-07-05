@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
+using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 
 namespace WpfTestTask.Additional
@@ -85,6 +86,8 @@ namespace WpfTestTask.Additional
             string[] users = System.IO.File.ReadAllLines("D:\\temp\\Рандом.csv");
             string[] names = System.IO.File.ReadAllLines("D:\\temp\\названия.txt");
             string[] shortcuts = System.IO.File.ReadAllLines("D:\\temp\\описания.txt");
+            string coversPath = "D:\\temp\\Обложки\\";
+            List<Book> books = new List<Book>();
             for (int i = 0; i < count; i++)
             {
                 string[] user = users[(new Random().Next(count) + count) % 500].Split(';');
@@ -101,10 +104,12 @@ namespace WpfTestTask.Additional
                     shortCut += new Random().Next(0, 1) == 0 ? shortcuts[new Random().Next(32)] : "";
                 List<GenreOfBook> genresOfBook = null;
                 string genresOnRow = null;
-                string coverText = null;
+                string coverText = coversPath + $"{new Random().Next(1, 51)}.png";
                 byte[] cover = null;
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortCut, genresOfBook, genresOnRow, coverText, cover);
+                books.Add(book);
             }
+            BookController.InsertDataBooks(books);
         }
     }
 }

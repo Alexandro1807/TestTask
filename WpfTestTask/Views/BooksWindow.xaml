@@ -58,5 +58,6 @@
         </GroupBox>
         <Rectangle x:Name="RectangleRefresh" Visibility="Visible" Height="349" Margin="143,10,10,0" Stroke="Black" VerticalAlignment="Top" Fill="#FF1D9E25" Loaded="RectangleRefresh_Loaded"/>
         <TextBlock x:Name="TextBlockRefresh" Margin="143,159,10,0" TextAlignment="Center" TextWrapping="Wrap" Text="Обновление" VerticalAlignment="Top" Height="56" FontSize="48" FontFamily="Impact" Loaded="TextBlockRefresh_Loaded"/>
+        <Button x:Name="ButtonAddRandom" Content="Button" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top" Click="ButtonAddRandom_Click"/>
     </Grid>
 </Window>
