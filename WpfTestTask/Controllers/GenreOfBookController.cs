@@ -50,8 +50,7 @@ namespace WpfTestTask.Controllers
             string command = "INSERT INTO public.\"GenresOfBook\"(\"Id\", \"LastModified\", \"BookId\", \"GenreId\") VALUES ";
             foreach (GenreOfBook genreOfBook in genresOfBook)
             {
-                command += "(" +
-                    $"'{genreOfBook.Id}', " +
+                command += $"('{genreOfBook.Id}', " +
                     $"'{genreOfBook.LastModified}', " +
                     $"'{genreOfBook.BookId}', " +
                     $"'{genreOfBook.GenreId}'), ";

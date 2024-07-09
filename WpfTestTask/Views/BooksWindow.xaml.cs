@@ -7,6 +7,7 @@ using WpfTestTask.Additional;
 using WpfTestTask.Controllers;
 using WpfTestTask.Models;
 using WpfTestTask.Views;
+using System.Windows.Controls.Primitives;
 
 namespace WpfTestTask
 {
@@ -40,6 +41,7 @@ namespace WpfTestTask
             GroupBoxFilters.Visibility = Visibility.Visible;
             ButtonGetBooks.Visibility = Visibility.Collapsed;
             _isInitialized = true;
+            SetPageCount();
         }
 
         private void RefreshForm()
@@ -104,8 +106,8 @@ namespace WpfTestTask
             TextBlockImageNotFound.Visibility = Visibility.Hidden;
 
             bool isRowCountNotNull = int.Parse(LabelPageMax.Content.ToString()) != 0;
-            ButtonPagePrev.IsEnabled = TextBoxPage.IsReadOnly = ButtonPageNext.IsEnabled = ComboBoxPageCount.IsEnabled = isRowCountNotNull;
-
+            ButtonPagePrev.IsEnabled = ButtonPageNext.IsEnabled = ComboBoxPageCount.IsEnabled = isRowCountNotNull;
+            TextBoxPage.IsReadOnly = !isRowCountNotNull;
             Visibility visibility = !_isInitialized ? Visibility.Visible : Visibility.Hidden;
             RectangleRefresh.Visibility = visibility;
             TextBlockRefresh.Visibility = visibility;
@@ -190,6 +192,15 @@ namespace WpfTestTask
         {
             List<Genre> genres = [new Genre(Guid.Empty, ""), .. GenreController.SelectDataGenres(true)];
             ComboBoxGenresFilter.ItemsSource = genres;
+        }
+
+        private void SetPageCount()
+        {
+            if (!_isInitialized) return;
+            if (!int.TryParse(LabelPageMax.Content.ToString(), out int maxPage)) return;
+            if (maxPage == 0) return;
+            if (!int.TryParse(ComboBoxPageCount.SelectedItem.ToString(), out int limit)) return;
+            _pageCount = (int)Math.Round((double)maxPage / limit, MidpointRounding.ToPositiveInfinity);
         }
         #endregion
 
@@ -288,7 +299,7 @@ namespace WpfTestTask
         private void TextBoxPage_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (TextBoxPage.Text == "") return;
-            if (_isInitialized) RefreshForm();
+            if (_isInitialized) RefreshingFilterTimerAsync(500);
         }
 
         private void LabelPageCurrentMax_Loaded(object sender, RoutedEventArgs e)
@@ -341,11 +352,7 @@ namespace WpfTestTask
 
         private void ComboBoxPageCount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!_isInitialized) return;
-            if (!int.TryParse(LabelPageMax.Content.ToString(), out int maxPage)) return;
-            if (maxPage == 0) return;
-            if (!int.TryParse(ComboBoxPageCount.SelectedItem.ToString(), out int limit)) return;
-            _pageCount = (int)Math.Round((double)maxPage / limit, MidpointRounding.ToPositiveInfinity);
+            SetPageCount();
             if (TextBoxPage.Text == "1") TextBoxPage.Text = "";
             TextBoxPage.Text = "1";
         }
@@ -404,9 +411,13 @@ namespace WpfTestTask
         }
         #endregion
 
-        private void ButtonAddRandom_Click(object sender, RoutedEventArgs e)
+        private void ButtonOpenAdditionalFunctionsWindow_Click(object sender, RoutedEventArgs e)
         {
-            AdditionalFunctions.AddRandomBooks(3000);
+            this.Hide();
+            AdditionalFunctionsWindow win = new AdditionalFunctionsWindow();
+            win.ShowDialog();
+            this.Show();
+            RefreshForm();
         }
     }
 }

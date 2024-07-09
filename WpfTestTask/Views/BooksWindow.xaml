@@ -27,11 +27,11 @@
         <TextBox x:Name="TextBoxShortcut" HorizontalAlignment="Left" Margin="10,169,0,0" IsReadOnly="True" Text="Краткое содержание" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="128" Height="64" VerticalAlignment="Top" Loaded="TextBoxShortcut_Loaded"/>
         <Label x:Name="LabelISBN" Content="ISBN" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="11,233,0,0" VerticalAlignment="Top" Width="128" Loaded="LabelISBN_Loaded"/>
         <TextBox x:Name="TextBoxISBN" HorizontalAlignment="Left" Margin="11,259,0,0" IsReadOnly="True" TextWrapping="Wrap" Text="ISBN" VerticalAlignment="Top" Width="128" Loaded="TextBoxISBN_Loaded"/>
-        <Label x:Name="LabelPageCurrentMin" Content="0" HorizontalAlignment="Left" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Margin="11,278,0,0" Width="27" Height="25" VerticalAlignment="Top" Loaded="LabelPageCurrent_Loaded"/>
-        <Label x:Name="LabelPageTo" Content="-" HorizontalAlignment="Left" Margin="31,278,0,0" VerticalAlignment="Top" Width="15" Height="25" Loaded="LabelTo_Loaded"/>
-        <Label x:Name="LabelPageCurrentMax" Content="0" HorizontalAlignment="Left" Margin="39,278,0,0" VerticalAlignment="Top" Width="28" Height="25" Loaded="LabelPageCurrentMax_Loaded"/>
-        <Label x:Name="LabelPageFrom" Content="из" HorizontalAlignment="Left" Margin="71,278,0,0" VerticalAlignment="Top" Width="24" Height="25" Loaded="LabelFrom_Loaded"/>
-        <Label x:Name="LabelPageMax" Content="0" HorizontalAlignment="Left" Margin="88,278,0,0" VerticalAlignment="Top" Width="51" Height="25" Loaded="LabelPageMax_Loaded"/>
+        <Label x:Name="LabelPageCurrentMin" Content="0" HorizontalAlignment="Left" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Margin="10,278,0,0" Width="40" Height="25" VerticalAlignment="Top" Loaded="LabelPageCurrent_Loaded"/>
+        <Label x:Name="LabelPageTo" Content="-" HorizontalAlignment="Left" Margin="43,278,0,0" VerticalAlignment="Top" Width="15" Height="25" Loaded="LabelTo_Loaded"/>
+        <Label x:Name="LabelPageCurrentMax" Content="0" HorizontalAlignment="Left" Margin="50,278,0,0" VerticalAlignment="Top" Width="40" Height="25" Loaded="LabelPageCurrentMax_Loaded"/>
+        <Label x:Name="LabelPageFrom" Content="из" HorizontalAlignment="Left" Margin="84,278,0,0" VerticalAlignment="Top" Width="24" Height="25" Loaded="LabelFrom_Loaded"/>
+        <Label x:Name="LabelPageMax" Content="0" HorizontalAlignment="Left" Margin="99,278,0,0" VerticalAlignment="Top" Width="40" Height="25" Loaded="LabelPageMax_Loaded"/>
         <Button x:Name="ButtonPagePrev" Content="«" HorizontalAlignment="Left" Margin="11,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPagePrev_Click" Loaded="ButtonPagePrev_Loaded"/>
         <TextBox x:Name="TextBoxPage" Text="1" PreviewTextInput="TextBoxPage_PreviewTextInput" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="35,308,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="78" Height="20" Loaded="TextBoxPage_Loaded" TextChanged="TextBoxPage_TextChanged" PreviewKeyDown="TextBoxPage_PreviewKeyDown"/>
         <Button x:Name="ButtonPageNext" Content="»" HorizontalAlignment="Left" Margin="119,308,0,0" VerticalAlignment="Top" Width="20" Click="ButtonPageNext_Click" Loaded="ButtonPageNext_Loaded" Height="20"/>
@@ -58,6 +58,6 @@
         </GroupBox>
         <Rectangle x:Name="RectangleRefresh" Visibility="Visible" Height="349" Margin="143,10,10,0" Stroke="Black" VerticalAlignment="Top" Fill="#FF1D9E25" Loaded="RectangleRefresh_Loaded"/>
         <TextBlock x:Name="TextBlockRefresh" Margin="143,159,10,0" TextAlignment="Center" TextWrapping="Wrap" Text="Обновление" VerticalAlignment="Top" Height="56" FontSize="48" FontFamily="Impact" Loaded="TextBlockRefresh_Loaded"/>
-        <Button x:Name="ButtonAddRandom" Content="Button" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top" Click="ButtonAddRandom_Click"/>
+        <Button x:Name="ButtonOpenAdditionalFunctionsWindow" Content="Доп. функции" HorizontalAlignment="Left" Margin="10,389,0,0" VerticalAlignment="Top" Width="128" Click="ButtonOpenAdditionalFunctionsWindow_Click"/>
     </Grid>
 </Window>

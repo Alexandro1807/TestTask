@@ -81,8 +81,8 @@ namespace WpfTestTask.Controllers
         #region Добавление данных
         public static void InsertDataBook(Book book) //Сохранение данных в таблицу Books
         {
-            string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES (" +
-                $"'{book.Id}', " +
+            string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES " +
+                $"'({book.Id}', " +
                 $"'{book.LastModified}', " +
                 $"'{book.Name}', " +
                 $"'{book.FirstName}', " +
@@ -94,12 +94,13 @@ namespace WpfTestTask.Controllers
             PSqlConnection.ExecuteData(command);       
         }
 
-        public static void InsertDataBooks(List<Book> books) //Сохранение множества данных в таблицу Books
+        public static int InsertDataBooks(List<Book> books) //Сохранение множества данных в таблицу Books
         {
-            string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES (";
+            List<GenreOfBook> genresOfBooks = new List<GenreOfBook>();
+            string command = "INSERT INTO public.\"Books\"(\"Id\", \"LastModified\", \"Name\", \"FirstName\", \"LastName\", \"MiddleName\", \"YearOfProduction\", \"ISBN\", \"Shortcut\")\tVALUES ";
             foreach(Book book in books)
             {
-                command += $"'{book.Id}', " +
+                command += $"('{book.Id}', " +
                 $"'{book.LastModified}', " +
                 $"'{book.Name}', " +
                 $"'{book.FirstName}', " +
@@ -108,9 +109,12 @@ namespace WpfTestTask.Controllers
                 $"'{book.YearOfProduction}', " +
                 $"'{book.ISBN}', " +
                 $"'{book.Shortcut}'), ";
+                genresOfBooks.AddRange(book.GenresOfBook);
             }
             command = command.Remove(command.LastIndexOf(", ")) + ";";
-            PSqlConnection.ExecuteData(command);
+            PSqlConnection.ExecuteData(command, out int count);
+            GenreOfBookController.InsertDataGenresOfBook(genresOfBooks);
+            return count;
         }
         #endregion
 

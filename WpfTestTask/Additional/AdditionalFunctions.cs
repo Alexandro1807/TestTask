@@ -81,8 +81,9 @@ namespace WpfTestTask.Additional
         /// Добавление случайных записей для наполнения базы
         /// </summary>
         /// <param name="count"></param>
-        public static void AddRandomBooks(int count)
+        public static int AddRandomBooks(int count)
         {
+            List<Genre> genres = GenreController.SelectDataGenres(true);
             string[] users = System.IO.File.ReadAllLines("D:\\temp\\Рандом.csv");
             string[] names = System.IO.File.ReadAllLines("D:\\temp\\названия.txt");
             string[] shortcuts = System.IO.File.ReadAllLines("D:\\temp\\описания.txt");
@@ -101,15 +102,24 @@ namespace WpfTestTask.Additional
                 string isbn = $"{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}-{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}{new Random().Next(0, 10)}-{new Random().Next(0, 10)}";
                 string shortCut = "";
                 for (int j = 0; j < 5; j++)
-                    shortCut += new Random().Next(0, 1) == 0 ? shortcuts[new Random().Next(32)] : "";
-                List<GenreOfBook> genresOfBook = null;
+                    shortCut += new Random().Next(0, j + 1) == 0 ? (shortcuts[new Random().Next(32)] + " ") : "";
+                List<GenreOfBook> genresOfBook = new List<GenreOfBook>();
+                for (int j = 0; j < genres.Count; j++)
+                {
+                    Genre genre = genres[(new Random().Next(count) + j) % genres.Count];
+                    if (new Random().Next(0, j) == 0)
+                    {
+                        GenreOfBook genreOfBook = new GenreOfBook(Guid.NewGuid(), lastModified, id, genre.Id);
+                        genresOfBook.Add(genreOfBook);
+                    }
+                }
                 string genresOnRow = null;
                 string coverText = coversPath + $"{new Random().Next(1, 51)}.png";
                 byte[] cover = null;
                 Book book = new Book(id, lastModified, name, lastName, firstName, middleName, yearOfProduction, isbn, shortCut, genresOfBook, genresOnRow, coverText, cover);
                 books.Add(book);
             }
-            BookController.InsertDataBooks(books);
+            return BookController.InsertDataBooks(books);
         }
     }
 }

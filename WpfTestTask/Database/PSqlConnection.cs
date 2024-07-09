@@ -84,5 +84,19 @@ namespace WpfTestTask.Database
                 PSqlConnectionClosed();
             }
         }
+
+        public static void ExecuteData(string command, out int count) //Вызов команды (добавление, изменение, удаление данных) с возвратом количества строк
+        {
+            try
+            {
+                PSqlConnectionOpen();
+                PSqlCommand(command);
+                count = sqlCommand.ExecuteNonQuery();
+            }
+            finally
+            {
+                PSqlConnectionClosed();
+            }
+        }
     }
 }

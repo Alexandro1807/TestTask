@@ -1,0 +1,15 @@
+﻿<Window x:Class="WpfTestTask.Views.AdditionalFunctionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfTestTask.Views"
+        mc:Ignorable="d"
+        Title="AdditionalFunctionsWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="ButtonAddRandomBooks" Content="Добавить книги случайно" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Click="ButtonAddRandomBooks_Click"/>
+        <Label x:Name="LabelAddRandomBooks" Content="Результат случайности" HorizontalAlignment="Left" Margin="161,47,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="TextBoxAddRandomBooks" HorizontalAlignment="Left" Margin="10,27,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="120"/>
+
+    </Grid>
+</Window>
